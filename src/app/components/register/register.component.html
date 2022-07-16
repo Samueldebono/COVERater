@@ -1,0 +1,60 @@
+<div class="register-wrapper" fxLayout="row" fxLayoutAlign="center center">
+  <mat-card class="box">
+    <mat-card-header>
+      <mat-card-title>Register</mat-card-title>
+    </mat-card-header>
+    <form class="register-form" [formGroup]="registerationForm" (ngSubmit)="onSubmit()">
+      <mat-card-content>
+        <!-- <mat-form-field class="register-full-width">
+          <input matInput placeholder="Username" formControlName="userName">
+          <span *ngIf="
+                                      !confirmPassword.valid &&
+                                      (confirmPassword.touched || userSubmitted)
+                                    " class="error-block">
+            <span *ngIf="confirmPassword.hasError('required')">
+              Please confirm password
+            </span>
+          </span>
+        </mat-form-field>
+        <br> -->
+        <mat-form-field class="register-full-width">
+          <input matInput placeholder="Email" formControlName="email">
+        </mat-form-field>
+        <!-- <br> -->
+        <!-- <mat-form-field class="register-full-width">
+          <input matInput placeholder="Password" required type="password" ngModel formControlName="password">
+        </mat-form-field>
+        <span *ngIf="!password.valid && (password.touched || userSubmitted)" class="error-block">
+          <span *ngIf="password.errors['required']">
+            Please provide password
+          </span>
+          <span *ngIf="password.errors['minlength']">
+            Password should not be lesser than 8 character
+          </span>
+        </span>
+        <br>
+        <mat-form-field class="register-full-width">
+          <input matInput placeholder="
+                  ConfirmPassword" required type="password" ngModel formControlName="confirmPassword">
+        </mat-form-field>
+        <span *ngIf="
+                                    !confirmPassword.valid &&
+                                    (confirmPassword.touched || userSubmitted)
+                                  " class="error-block">
+          <span *ngIf="confirmPassword.hasError('required')">
+            Please confirm password
+          </span>
+        </span> -->
+        <!-- <br>
+        <mat-form-field class="register-full-width">
+          <mat-label>Please provide your level of experience</mat-label>
+          <mat-select formControlName="experience">
+            <mat-option [value]="exp" *ngFor="let exp of xp">{{exp}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field> -->
+      </mat-card-content>
+      <button [disabled]="!registerationForm.valid" type="submit" class="btn btn-primary">Register</button>
+    </form>
+  </mat-card>
+</div>

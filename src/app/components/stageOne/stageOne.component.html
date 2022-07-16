@@ -1,0 +1,59 @@
+<div class="quiz-wrapper">
+  <form class="quiz-form" [formGroup]="quizForm" (ngSubmit)="onSubmit()">
+    <mat-grid-list cols="2" rowHeight="400px" gutterSize="15px">
+      <mat-grid-tile>
+        <div class="species-image-tile">
+          <p>What % of this species</p>
+          <img [src]="currentSubUrl" class="shadow-boarder" style="height: 200px; width: 300px" />
+        </div>
+      </mat-grid-tile>
+      <mat-grid-tile>
+        <div>
+          <p>Covers this image</p>
+          <img [src]="currentUrl" style="height: 300px; width: 400px" />
+          </div>
+        </mat-grid-tile>
+    </mat-grid-list>
+    <div class="slider-section">
+      <mat-slider
+  thumbLabel
+  [displayWith]="formatLabel"
+  tickInterval="1000"
+ min="0"
+        max="100"
+        step="0.5"
+        value="0"
+  aria-label="units"
+
+        ></mat-slider>
+      <!-- <mat-slider
+        min="0"
+        max="100"
+        step="0.5"
+        value="0"
+        #matslider
+        (change)="sliderUpdate($event)"
+      ></mat-slider> -->
+      <div>
+      <!-- <div>
+        {{ guessPercent }}
+      </div> -->
+    </div>
+    <!-- <div>
+      <p>{{ display }} Seconds</p>
+    </div> -->
+    <div>
+      <button
+        [disabled]="false"
+        type="submit"
+        class="btn btn-primary"
+      >
+        Submit
+      </button>
+    </div>
+    </div>
+    <div *ngIf="showProgress" class="accuracy">
+      <p>{{ finalPercentage }}% accuracy from the last 10 images</p>
+    </div>
+  </form>
+</div>

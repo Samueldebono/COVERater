@@ -5,15 +5,19 @@ namespace COVERater.API.Entities
 {
     public class CoveraterContext : DbContext
     {
+
         public CoveraterContext()
         {
+
         }
 
         public CoveraterContext(DbContextOptions<CoveraterContext> options)
             : base(options)
         {
+
         }
-        public DbSet<User> User { get; set; }
+
+        public DbSet<UserStats> UserStats { get; set; }
         public DbSet<UserEmails> UserEmails { get; set; }
         public DbSet<Image> Image { get; set; }
         public DbSet<UsersGuess> UsersGuess { get; set; }
@@ -24,6 +28,13 @@ namespace COVERater.API.Entities
         {
 
         }
-       
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            builder.Entity<Image>()
+                .HasMany(c=>c.SubImages)
+                .WithOne(e=>e.Image)
+                .OnDelete(DeleteBehavior.Restrict);
+        }
     }
 }

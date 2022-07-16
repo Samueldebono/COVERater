@@ -12,7 +12,7 @@ namespace COVERater.API.Profiles
     {
         public UserProfile()
         {
-            CreateMap<User, UserDto>();
+            CreateMap<UserStats, UserDto>();
         }
     }
 }

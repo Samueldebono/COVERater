@@ -11,5 +11,9 @@ namespace COVERater.API.Models
         public byte RoleType { get; set; }
         public DateTime ExpiryDate { get; set; }
         public int AccessId { get; set; }
+        public int RoleId { get; set; }
+        public List<UserStats> UserStats { get; set; }
+
+        public string UserName { get; set; }
     }
 }

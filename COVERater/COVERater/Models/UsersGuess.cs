@@ -13,11 +13,13 @@ namespace COVERater.API.Models
         public decimal GuessPercentage { get; set; }
 
         public int UserId { get; set; }
-        public int ImageId { get; set; }
+        public int SubImageId { get; set; }
         public byte Phase { get; set; }
+        public DateTime GuessTimeUtc { get; set; }
 
-        public virtual Image Image { set; get; }
-        public virtual User User { set; get; }
+        public virtual SubImage SubImage { set; get; }
+
+
 
     }
 }

@@ -6,12 +6,14 @@ using COVERater.API.Models;
 
 namespace COVERater.API.Dto
 {
-    public class ImageDto
+    public class SubImageDto
     {
-        public int ImageId { get; set; }
+        public int SubImageId { get; set; }
         public Guid CloudinaryId { get; set; }
         public string FileName { get; set; }
         public string Name { get; set; }
-        public List<SubImageDto> SubImageDto { get; set; }
+        public bool Delete { get; set; }
+        public decimal CoverageRate { get; set; }
+        
     }
 }

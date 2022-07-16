@@ -12,8 +12,7 @@ namespace COVERater.API.Dto
     {
         [DataMember(Name = "UserId")]
         public int UserId { get; set; }
-        [DataMember(Name = "HashUser")]
-        public Guid? HashUser { get; set; }
+
         [DataMember(Name = "CreatedUtc")]
         public DateTime CreatedUtc { get; set; }
         [DataMember(Name = "FinishedPhase1Utc")]

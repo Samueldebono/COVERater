@@ -6,25 +6,19 @@ using System.Threading.Tasks;
 
 namespace COVERater.API.Models
 {
-    public class Image
+    public class SubImage
     {
         [Key]
-        public int ImageId { get; set; }
+        public int SubImageId { get; set; }
         public Guid CloudinaryId { get; set; }
         public DateTime AddedUtc { get; set; }
         public string FileName { get; set; }
         public string Name { get; set; }
-        
         public bool Delete { get; set; }
+        public decimal CoverageRate { get; set; }
         public DateTime? DeletedUtc { get; set; }
-        public ImageType Type { get; set; }
-        public virtual List<SubImage> SubImages { get; set; }
 
-    }
-
-    public enum ImageType
-    {
-        Terrestrial,
-        Marine
+        public int ImageId { get; set; }
+        public Image Image { get; set; }
     }
 }

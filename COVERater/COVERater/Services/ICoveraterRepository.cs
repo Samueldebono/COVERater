@@ -1,15 +1,18 @@
-﻿using COVERater.API.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using COVERater.API.Models;
 
 namespace COVERater.API.Services
 {
     public interface ICoveraterRepository
     {
 
-        IEnumerable<User> GetUsers();
-        User GetUser(Guid userId);
-        User GetUser(int userId);
-        User CreateUser(User user);
-        void UpdateUser(User user);
+        IEnumerable<UserStats> GetUsers();
+        UserStats GetUser(Guid userId);
+        UserStats GetUser(int userId);
+        UserStats CreateUser(UserStats user);
+        void UpdateUser(UserStats user);
         bool UserExists(int userId);
 
 
@@ -19,7 +22,7 @@ namespace COVERater.API.Services
 
         #region UserGuess
 
-        IEnumerable<UsersGuess> GetUserGuesses();
+        Task<IEnumerable<UsersGuess>> GetUserGuesses();
         UsersGuess CreateUserGuess(UsersGuess usersGuess);
         void UpdateUserGuess(UsersGuess usersGuess);
 
@@ -39,7 +42,14 @@ namespace COVERater.API.Services
 
         #region Roles
 
-        AuthUsers Authenticate(string userName/*, string Password*/);
+        AuthUsers Authenticate(string userName);
+        AuthUsers CreateAuthUsers(AuthUsers authUsers);
+        AuthUsers ResetPassword(AuthUsers authUsers);
+        AuthUsers? AuthUsers(string email);
+        AuthUsers GetAuthUsers(int roleId);
+
+        
+
         Token CreateToken(Token token);
         Token GetToken(int tokenId);
         void UpdateToken(Token token);

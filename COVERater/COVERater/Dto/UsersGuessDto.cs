@@ -29,7 +29,7 @@ namespace COVERater.API.Dto
         public virtual Image Image { set; get; }
 
         [DataMember(Name = "User")]
-        public virtual User User { set; get; }
+        public virtual UserStats UserStats { set; get; }
 
     }
 }

@@ -8,12 +8,11 @@ using COVERater.API.Dto;
 
 namespace COVERater.API.Profiles
 {
-    public class ImageProfile : Profile
+    public class SubImageProfile : Profile
     {
-        public ImageProfile()
+        public SubImageProfile()
         {
-            CreateMap<Image, ImageDto>().ForMember(dest=>dest.SubImageDto, 
-                act=>act.MapFrom(src=>src.SubImages));
+            CreateMap<SubImage, SubImageDto>();
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using API.Traidy.Services;
 using AutoMapper;
 using COVERater.API.Bindings;
 using COVERater.API.Helpers;
@@ -12,16 +13,15 @@ using COVERater.API.Models;
 using COVERater.API.Services;
 using Marvin.Cache.Headers;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.ValueGeneration.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using JwtRegisteredClaimNames = System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames;
 namespace COVERater.API.Controllers
 {
-    [Route("api")]
+    [Route("api/V1")]
     [ApiController]
     [HttpCacheExpiration(CacheLocation = CacheLocation.Public, MaxAge = 1)]
     [HttpCacheValidation(MustRevalidate = true)]
@@ -49,8 +49,10 @@ namespace COVERater.API.Controllers
             // return null if user not found
             if (user == null)
                 return BadRequest(new { message = "Username or password is incorrect" });
+
             //password check
-            var passwordHash = new PasswordHasher(10000);
+            var parts = user.Password.Split('.', 3);
+            var passwordHash = new PasswordHasher(Convert.ToInt32(parts[0]));
             var passwordCheck = passwordHash.Check(user.Password, model.Password);
 
             if (!passwordCheck.Verified)
@@ -64,17 +66,17 @@ namespace COVERater.API.Controllers
 
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub,"Guest" /*model.UserName*/),
+                new Claim(JwtRegisteredClaimNames.Sub, model.UserName),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.AuthTime, AuthTime.ToString()) 
+                new Claim(JwtRegisteredClaimNames.AuthTime, AuthTime.ToString())
             };
 
             var token = new JwtSecurityToken(
                 issuer: _appSettings.Issuer,
                 audience: _appSettings.Issuer,
                 claims,
-                expires:DateTime.Now.AddMinutes(120),
-                signingCredentials:credentials);
+                expires: DateTime.Now.AddMinutes(120),
+                signingCredentials: credentials);
 
             var encodeToken = new JwtSecurityTokenHandler().WriteToken(token);
 
@@ -82,23 +84,26 @@ namespace COVERater.API.Controllers
             {
                 BearerToken = encodeToken,
                 RoleType = user.RoleType,
-                ExpiryDate = DateTime.Now.AddMinutes(120)
+                ExpiryDate = DateTime.Now.AddMinutes(120),
+                UserStats = user.UserStats,
+                UserName = user.UserName,
+                RoleId = user.RoleId
             };
 
             var accessToken = new Token
             {
-                UserGuid = "",//unknown at this point
+                UserGuid = user.HashUser.Value.ToString(), //unknown at this point
                 CreateTime = AuthTime,
                 ExpiresTime = DateTime.Now.AddMinutes(120),
                 RoleId = user.RoleType,
                 UserId = user.RoleId
             };
             //create login token
-           var tokenResult = _CoveraterRepository.CreateToken(accessToken);
-           _CoveraterRepository.Save();
+            var tokenResult = _CoveraterRepository.CreateToken(accessToken);
+            _CoveraterRepository.Save();
 
-           response.AccessId = tokenResult.TokenId;
-           return Ok(response);
+            response.AccessId = tokenResult.TokenId;
+            return Ok(response);
         }
 
         /// <summary>
@@ -127,6 +132,103 @@ namespace COVERater.API.Controllers
         //    var temp = passwordHash.Hash(password);
         //    return Ok(temp);
         //}
+
+        //[AllowAnonymous]
+        //[HttpPost("hash/authenticate")]
+        //public IActionResult Authenticate(string password, string onserver )
+        //{
+        //    //password check
+        //    var passwordHash = new PasswordHasher(10000);
+        //    var passwordCheck = passwordHash.Check(onserver, password);
+
+
+        //}
+
+        [AllowAnonymous]
+        [HttpPost("authUser")]
+        public async Task<IActionResult> CreateAuthUserAsync(AuthBinding binding)
+        {
+            var user = new UserStats()
+            {
+                CreatedUtc = DateTime.UtcNow
+            };
+          var newUser = _CoveraterRepository.CreateUser(user);
+            _CoveraterRepository.Save();
+          
+            int _min = 1000;
+            int _max = 9999;
+            Random _rdm = new Random();
+            var temp = _rdm.Next(_min, _max);
+            var passwordHash = new PasswordHasher(temp);
+            binding.Password = passwordHash.RandomPassword();
+            var tempPassHash = passwordHash.Hash(binding.Password);
+
+            var authUser = new AuthUsers()
+            {
+                UserName = binding.UserName,
+                Password = tempPassHash,
+                Email = binding.Email,
+                ExperienceLevel = binding.Experience.Value,
+                RoleType = binding.RoleType.Value,
+                HashUser = Guid.NewGuid()
+            };
+
+            //authUser.SetUserId(newUser.UserId);
+            _CoveraterRepository.CreateAuthUsers(authUser);
+            var emailer = new SendgridService(_CoveraterRepository);
+            await emailer.SendActivationEmailAsync(authUser, binding.Password);
+            
+
+            return Ok();
+        }
+
+        [AllowAnonymous]
+        [HttpPost("reset/password")]
+        public async Task<IActionResult> ResetPasswordAsync(ResetPasswordBinding binding)
+        {
+            int _min = 1000;
+            int _max = 9999;
+            Random _rdm = new Random();
+            var passwordHash = new PasswordHasher(_rdm.Next(_min, _max));
+            var password = passwordHash.RandomPassword();
+            var tempPassHash = passwordHash.Hash(password);
+
+            var authUser = new AuthUsers()
+            {
+               Password = tempPassHash,
+                Email = binding.Email
+            };
+            
+            _CoveraterRepository.ResetPassword(authUser);
+            var emailer = new SendgridService(_CoveraterRepository);
+            await emailer.SendResetPasswordAsync(authUser, password);
+
+            return Ok();
+        }
+
+
+        [AllowAnonymous]
+        [HttpGet("authUserExists")]
+        public IActionResult AuthUserExists(string email)
+        {
+            return Ok(_CoveraterRepository.AuthUsers(email) != null);
+
+        }
+
+
+
+        //[Authorize]
+        [HttpPost("sendDetails/{id}")]
+        public async Task<IActionResult> sendDetails(int id)
+        {
+            var authUser =_CoveraterRepository.GetAuthUsers(id);
+            
+            var emailer = new SendgridService(_CoveraterRepository);
+            await emailer.SendDetailsAsync(authUser);
+
+            return Ok();
+
+        }
 
 
     }

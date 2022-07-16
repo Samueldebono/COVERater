@@ -13,9 +13,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace COVERater.API.Controllers
 {
-    [Route("api")]
+    [Route("api/V1")]
     [ApiController]
-    [HttpCacheExpiration(CacheLocation = CacheLocation.Public, MaxAge = 10)]
+    [HttpCacheExpiration(CacheLocation = CacheLocation.Public)]
     [HttpCacheValidation(MustRevalidate = true)]
     [Produces("application/json")] 
     public class ImageController: ControllerBase

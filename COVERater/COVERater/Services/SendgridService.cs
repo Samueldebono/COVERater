@@ -12,7 +12,6 @@ namespace API.Traidy.Services
 
     public class SendgridService/* : ISendGridClient, IDisposable*/
     {
-        const string ApiKey = "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";
         const string ForgotTemplateId = "d-561d957da3e048f2ab3c5dbd5cc86d5bc";
         const string WelcomeTempleteId = "d-da0f10dfb62c41d49ee6742c5347312a";
         const string ReminderTempleteId = " d-ca640c8858c2414b8ae843d0ddc4dd0f";

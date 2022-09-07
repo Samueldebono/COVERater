@@ -23,6 +23,7 @@ namespace COVERater.API.Entities
         public DbSet<UsersGuess> UsersGuess { get; set; }
         public DbSet<AuthUsers> AuthUsers { get; set; }
         public DbSet<Token> Tokens { get; set; }
+        public DbSet<EmailLogs> EmailLogs { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

@@ -23,7 +23,7 @@ namespace COVERater.API.Services
         #region UserGuess
 
         Task<IEnumerable<UsersGuess>> GetUserGuesses();
-        UsersGuess CreateUserGuess(UsersGuess usersGuess);
+        Task<UsersGuess> CreateUserGuess(UsersGuess usersGuess);
         void UpdateUserGuess(UsersGuess usersGuess);
 
         #endregion
@@ -47,6 +47,7 @@ namespace COVERater.API.Services
         AuthUsers ResetPassword(AuthUsers authUsers);
         AuthUsers? AuthUsers(string email);
         AuthUsers GetAuthUsers(int roleId);
+        IEnumerable<AuthUsers> GetAuthUsers();
 
         
 
@@ -55,8 +56,8 @@ namespace COVERater.API.Services
         void UpdateToken(Token token);
         #endregion
 
+        EmailLogs CreateEmailLogs(EmailLogs email);
 
-
-        bool Save();
+        Task<bool> Save();
     }
 }

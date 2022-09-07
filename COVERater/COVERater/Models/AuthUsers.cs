@@ -18,19 +18,6 @@ namespace COVERater.API.Models
         
         public byte ExperienceLevel { get; set; }
         public Guid? HashUser { get; set; }
-
-
-        //[ForeignKey("User")]
-        //protected virtual int? UserId { get; set; }
-
-        //public void SetUserId(int? id)
-        //{
-        //    UserId = id;
-        //}
-        //public int GetUserId()
-        //{
-        //    return UserId ?? 0;
-        //}
         public virtual List<UserStats> UserStats { get; set; }
 
 

@@ -44,6 +44,67 @@ namespace COVERater.API.Controllers
             return Ok(results);
         }
 
+        [Authorize]
+        [HttpGet("users/results", Name = "GetUsersResults")]
+        public ActionResult<List<UsersResultDto>> GetUsersResults()
+        {
+
+            var authUsers = _CoveraterRepository.GetAuthUsers();
+            if (authUsers == null)
+            {
+                return NotFound();
+            }
+
+            var results = new List<UsersResultDto>();
+
+            foreach (var authUser in authUsers)
+            {
+                var users = authUser.UserStats.Where(x => x.FinishedPhaseUtc != null);
+
+                foreach (var user in users)
+                {
+                    if (user.Phase != 2)
+                    {
+                        List<decimal> diff = new List<decimal>();
+                        foreach (var guess in user.Guesses)
+                        {
+                            diff.Add(Math.Round((Math.Abs(guess.GuessPercentage - guess.SubImage.CoverageRate) * 100),
+                                2));
+                        }
+
+                        decimal total = 0;
+                        foreach (var d in diff)
+                        {
+                            total = total + d;
+                        }
+
+                        user.FinishingPercentPhase = Math.Round((total / user.PictureCycledPhase.Value), 2);
+                    }
+
+                    var mappedUser = new UsersResultDto
+                    {
+                        UserId = user.UserId,
+                        CreatedUtc = user.CreatedUtc,
+                        Guesses = user.Guesses,
+                        FinishingPercentPhase = user.FinishingPercentPhase,
+                        FinishedPhaseUtc = user.FinishedPhaseUtc,
+                        Role = authUser.RoleType,
+                        Email = authUser.Email,
+                        Experience = authUser.ExperienceLevel,
+                        PictureCycledPhase = user.PictureCycledPhase,
+                        Phase = user.Phase,
+                        TimePhase = user.TimePhase
+
+                };
+                    results.Add(mappedUser);
+                }
+
+
+            }
+            
+            return Ok(results);
+        }
+
         [HttpGet("user/hash/{id}", Name = "GetUserHash")]
         [Authorize]
         public  ActionResult<UserDto> GetUsers(Guid id)
@@ -59,7 +120,7 @@ namespace COVERater.API.Controllers
             return Ok(results);
         }
 
-        //[Authorize]
+        [Authorize]
         [HttpGet("user/{id}", Name = "GetUser")]
         public  ActionResult<UserDto> GetUsers(int id)
         {
@@ -71,8 +132,8 @@ namespace COVERater.API.Controllers
                 return NotFound();
 
             var user = authUser.UserStats.OrderByDescending(x => x.CreatedUtc).FirstOrDefault();
-            if (user == null)
-                return NotFound();
+            //if (user == null)
+            //    return NotFound();
 
             //if (user == null)
             //{
@@ -83,7 +144,7 @@ namespace COVERater.API.Controllers
             return Ok(results);
         }
 
-        //[Authorize]
+        [Authorize]
         [HttpPost("user")]
         public ActionResult<UserDto> CreateUser(CreateUserBinding binding)
         {
@@ -91,7 +152,9 @@ namespace COVERater.API.Controllers
             var user = new UserStats()
             {
                 CreatedUtc = DateTime.UtcNow,
-                FinishingPercentPhase = (decimal)1.0
+                FinishingPercentPhase = (decimal)1.0,
+                Phase = binding.Phase,
+                Guesses = new List<UsersGuess>()
             };
             users.UserStats.Add(user);
             _CoveraterRepository.Save();
@@ -100,7 +163,7 @@ namespace COVERater.API.Controllers
             return Ok(results);
         }
 
-        //[Authorize]
+        [Authorize]
         [HttpPost("user/hash/{id}")]
         public ActionResult<UserDto> UpdateUser(Guid id, [FromBody] UpdateUserBinding binding)
         {
@@ -121,7 +184,7 @@ namespace COVERater.API.Controllers
             return Ok(results);
         }
 
-        //[Authorize]
+        [Authorize]
         [HttpPost("user/{id}", Name = "UpdateUser")]
         public IActionResult UpdateUserViaId(int id, [FromBody] UpdateUserBinding binding)
         {
@@ -135,42 +198,12 @@ namespace COVERater.API.Controllers
             if (userStats == null)
                 return NotFound();
 
-            //var userAdd = new UserStats()
-            //{
-
             userStats.FinishedPhaseUtc = binding.FinishedUtc;
-            userStats.TimePhase = binding.Time;
+            userStats.TimePhase = userStats.TimePhase == null ? binding.Time : userStats.TimePhase;
             userStats.FinishingPercentPhase = binding.FinishingPercent;
             userStats.PictureCycledPhase = binding.PictureCycled;
             userStats.Phase = binding.Phase;
-            userStats.Guesses = new List<UsersGuess>();
-            //};
 
-
-            //authUser.UserStats.Add(userAdd);
-            //switch (binding.Phase)
-            //{
-            //    case 0:
-            //        user.FinishedPhase1Utc = binding.FinishedUtc;
-            //        user.TimePhase1 = binding.Time;
-            //        user.FinishingPercentPhase1 = binding.FinishingPercent;
-            //        user.PictureCycledPhase1 = binding.PictureCycled;
-            //        break;
-            //    case 1:
-            //        user.FinishedPhase2Utc = binding.FinishedUtc;
-            //        user.TimePhase2 = binding.Time;
-            //        user.FinishingPercentPhase2 = binding.FinishingPercent;
-            //        user.PictureCycledPhase2 = binding.PictureCycled;
-            //        break;
-            //    case 2:
-            //        user.FinishedPhase3Utc = binding.FinishedUtc;
-            //        user.TimePhase3 = binding.Time;
-            //        user.FinishingPercentPhase3 = binding.FinishingPercent;
-            //        user.PictureCycledPhase3 = binding.PictureCycled;
-            //        break;
-            //}
-
-            //_CoveraterRepository.CreateUser(userAdd);
             _CoveraterRepository.Save();
 
             var results = _mapper.Map<UserDto>(userStats);

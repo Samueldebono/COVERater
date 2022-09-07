@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using API.Traidy.Services;
 using AutoMapper;
 using COVERater.API.Bindings;
+using COVERater.API.Dto;
 using COVERater.API.Helpers;
 using COVERater.API.Models;
 using COVERater.API.Services;
@@ -32,6 +33,7 @@ namespace COVERater.API.Controllers
         private readonly ICoveraterRepository _CoveraterRepository;
         private readonly AppSettings _appSettings;
         private IConfiguration _config;
+        private IMapper _mapper;
 
         public AuthenticationController(ICoveraterRepository CoveraterRepository, IMapper mapper,
             IOptions<AppSettings> appSettings, IConfiguration config)
@@ -39,6 +41,7 @@ namespace COVERater.API.Controllers
             _CoveraterRepository = CoveraterRepository ?? throw new ArgumentNullException(nameof(CoveraterRepository));
             _appSettings = appSettings.Value;
             _config = config;
+            _mapper = mapper;
         }
 
         [AllowAnonymous]
@@ -123,27 +126,6 @@ namespace COVERater.API.Controllers
             return Ok(token);
         }
 
-        //If need to create new password
-        //[AllowAnonymous]
-        //[HttpPost("hash/authenticate")]
-        //public IActionResult Authenticate(string password)
-        //{
-        //    var passwordHash = new PasswordHasher(4859);
-        //    var temp = passwordHash.Hash(password);
-        //    return Ok(temp);
-        //}
-
-        //[AllowAnonymous]
-        //[HttpPost("hash/authenticate")]
-        //public IActionResult Authenticate(string password, string onserver )
-        //{
-        //    //password check
-        //    var passwordHash = new PasswordHasher(10000);
-        //    var passwordCheck = passwordHash.Check(onserver, password);
-
-
-        //}
-
         [AllowAnonymous]
         [HttpPost("authUser")]
         public async Task<IActionResult> CreateAuthUserAsync(AuthBinding binding)
@@ -169,7 +151,7 @@ namespace COVERater.API.Controllers
                 Password = tempPassHash,
                 Email = binding.Email,
                 ExperienceLevel = binding.Experience.Value,
-                RoleType = binding.RoleType.Value,
+                RoleType = binding.RoleType.HasValue ? binding.RoleType.Value : (byte)1,
                 HashUser = Guid.NewGuid()
             };
 
@@ -177,7 +159,30 @@ namespace COVERater.API.Controllers
             _CoveraterRepository.CreateAuthUsers(authUser);
             var emailer = new SendgridService(_CoveraterRepository);
             await emailer.SendActivationEmailAsync(authUser, binding.Password);
+
+            if (authUser.RoleType == 1)
+            {
+               await emailer.AddContact(authUser);
+            }
             
+
+            return Ok();
+        }
+
+        [Authorize]
+        [HttpPost("authUser/experience")]
+        public async Task<IActionResult> CreateAuthUserAsync(UserExperienceUpdateBinding binding)
+        {
+
+            var newUser = _CoveraterRepository.GetAuthUsers(binding.UserId);
+
+          if (newUser == null)
+          {
+              return NotFound();
+          }
+
+          newUser.ExperienceLevel = binding.Experience;
+          _CoveraterRepository.Save();
 
             return Ok();
         }
@@ -215,16 +220,44 @@ namespace COVERater.API.Controllers
 
         }
 
-
-
-        //[Authorize]
-        [HttpPost("sendDetails/{id}")]
-        public async Task<IActionResult> sendDetails(int id)
+        [Authorize]
+        [HttpPost("authUsers/results")]
+        public async Task<IActionResult> GetAuthUsers()
         {
-            var authUser =_CoveraterRepository.GetAuthUsers(id);
-            
-            var emailer = new SendgridService(_CoveraterRepository);
-            await emailer.SendDetailsAsync(authUser);
+            var authUsers =_CoveraterRepository.GetAuthUsers();
+            if (authUsers == null)
+            {
+                return NotFound();
+            }
+
+            foreach (var authUser in authUsers)
+            {
+                var users = authUser.UserStats.Where(x => x.FinishedPhaseUtc != null);
+                
+                foreach (var user in users)
+                {
+                    if (user.Phase != 2)
+                    {
+                        List<decimal> diff = new List<decimal>();
+                        foreach (var guess in user.Guesses)
+                        {
+                            diff.Add(Math.Round((Math.Abs(guess.GuessPercentage - guess.SubImage.CoverageRate) * 100),
+                                2));
+                        }
+
+                        decimal total = 0;
+                        foreach (var d in diff)
+                        {
+                            total = total + d;
+                        }
+
+                        user.FinishingPercentPhase = Math.Round((total / user.PictureCycledPhase.Value), 2);
+                    }
+                }
+                
+            }
+
+            var results = _mapper.Map<List<AuthUserResultsDto>>(authUsers);
 
             return Ok();
 

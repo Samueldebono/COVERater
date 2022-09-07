@@ -4,14 +4,16 @@ using COVERater.API.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace COVERater.API.Migrations
 {
     [DbContext(typeof(CoveraterContext))]
-    partial class CoveraterContextModelSnapshot : ModelSnapshot
+    [Migration("20220731130159_emaillogs")]
+    partial class emaillogs
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -265,11 +267,14 @@ namespace COVERater.API.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("UserStatsUserId")
+                        .HasColumnType("int");
+
                     b.HasKey("UsersGuessId");
 
                     b.HasIndex("SubImageId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserStatsUserId");
 
                     b.ToTable("UsersGuess");
                 });
@@ -298,11 +303,9 @@ namespace COVERater.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("COVERater.API.Models.UserStats", "UserStats")
+                    b.HasOne("COVERater.API.Models.UserStats", null)
                         .WithMany("Guesses")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserStatsUserId");
                 });
 #pragma warning restore 612, 618
         }

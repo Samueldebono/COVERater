@@ -85,6 +85,16 @@ namespace COVERater.API.Services
             
             return authUsers;
         }
+        public IEnumerable<AuthUsers> GetAuthUsers()
+        {
+
+            var authUsers = _context.AuthUsers.Include(x => x.UserStats)
+                .ThenInclude(x => x.Guesses)
+                .ThenInclude(x => x.SubImage).ToList();
+                 
+            
+            return authUsers;
+        }
 
         #endregion
 
@@ -93,7 +103,7 @@ namespace COVERater.API.Services
 
         public IEnumerable<UserStats> GetUsers()
         {
-            var query = _context.UserStats.Include(x => x.Guesses) as IQueryable<UserStats>;
+            var query = _context.UserStats.Include(x => x.Guesses).ThenInclude(x => x.SubImage);
             
             return query.ToList<UserStats>();
         }        
@@ -171,7 +181,7 @@ namespace COVERater.API.Services
             return query.ToList<UsersGuess>();
         }
 
-        public UsersGuess CreateUserGuess(UsersGuess usersGuess)
+        public async Task<UsersGuess> CreateUserGuess(UsersGuess usersGuess)
         {
             if (usersGuess == null)
             {
@@ -181,6 +191,7 @@ namespace COVERater.API.Services
             try
             {
                 var user = _context.UsersGuess.Add(usersGuess);
+                await Save();
                 return user.Entity;
             }
             catch (Exception e)
@@ -188,7 +199,6 @@ namespace COVERater.API.Services
                 Console.WriteLine(e);
                 throw;
             }
-          
         }
 
         public void UpdateUserGuess(UsersGuess usersGuess)
@@ -256,9 +266,26 @@ namespace COVERater.API.Services
 
         #endregion
 
-        public bool Save()
+        #region email
+        public EmailLogs CreateEmailLogs(EmailLogs email)
         {
-            return (_context.SaveChanges() >= 0);
+            if (email == null)
+            {
+                throw new ArgumentNullException(nameof(email));
+            }
+
+            var newUser = _context.EmailLogs.Add(email);
+            _context.SaveChanges();
+            return newUser.Entity;
+        }
+
+
+
+        #endregion
+
+        public async Task<bool> Save()
+        {
+            return (await _context.SaveChangesAsync() >= 0);
         }
 
 

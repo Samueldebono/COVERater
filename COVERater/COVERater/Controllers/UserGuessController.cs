@@ -30,7 +30,7 @@ namespace COVERater.API.Controllers
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-        //[Authorize]
+        [Authorize]
         [HttpGet("usersGuess", Name = "GetUsersGuess")]
         public ActionResult<List<UsersGuess>> GetUserGuess()
         {
@@ -41,9 +41,9 @@ namespace COVERater.API.Controllers
             var result = _mapper.Map<List<UsersGuess>>(guesses);
             return Ok(result);
         }
-        //[Authorize]
+        [Authorize]
         [HttpPost("usersGuess", Name = "CreateUsersGuess")]
-        public IActionResult CreateUserGuess([FromBody]UserGuessBinding binding)
+        public async Task<IActionResult> CreateUserGuess([FromBody]UserGuessBinding binding)
         {
             var auth = _CoveraterRepository.GetAuthUsers(binding.RoleId);
             if (auth == null)
@@ -61,17 +61,17 @@ namespace COVERater.API.Controllers
                 SubImageId = binding.SubImageId,
                 Phase = binding.Phase,
                 GuessTimeUtc = DateTime.UtcNow,
-                UserId = userStats.UserId,
+                UserId = userStats.UserId,  
+                UserStats = userStats
 
             };
 
             //userStats.Guesses.Add(userGuess);
-            _CoveraterRepository.CreateUserGuess(userGuess);
-           var results = _CoveraterRepository.Save();
+            await _CoveraterRepository.CreateUserGuess(userGuess);
 
             return Ok(userGuess);
         }
-        //[Authorize]
+        [Authorize]
         [HttpCacheIgnore]
         [HttpGet("usersGuess/{id}/{phase?}")]
         public async Task<IActionResult> GetUserGuess(int id, byte? phase)

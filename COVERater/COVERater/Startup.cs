@@ -48,6 +48,7 @@ namespace COVERater.API
             //services.AddResponseCaching();
 
             var connection = Configuration.GetConnectionString("development");
+            //var connection = Configuration.GetConnectionString("release");
             services.AddDbContext<CoveraterContext>(options => options.UseSqlServer(connection));
 
             services.AddScoped<ICoveraterRepository, CoveraterRepository>();
@@ -76,6 +77,8 @@ namespace COVERater.API
                         var problemDetails = new ValidationProblemDetails(context.ModelState)
                         {
                             Type = "http://localhost:7054",
+
+                            //Type = "https://coverater.com/modelvalidationproblem",
                             Title = "One or more model validation errors occurred.",
                             Status = StatusCodes.Status422UnprocessableEntity,
                             Detail = "See the errors property for details.",
@@ -148,6 +151,28 @@ namespace COVERater.API
                     c.RoutePrefix = string.Empty;
                 });
             }
+            else
+            {
+                app.UseExceptionHandler(appBuilder =>
+                {
+                    appBuilder.Run(async context =>
+                        {
+                            context.Response.StatusCode = 500;
+                            await context.Response.WriteAsync("An Unexpected fault has occured. Try again later.");
+                        }
+                    );
+                });
+            }
+
+            //TO REMOVE
+                            app.UseDeveloperExceptionPage();
+                app.UseSwagger();
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("swagger/v1/swagger.json", "Coverater");
+                    c.RoutePrefix = string.Empty;
+                });
+
             app.UseResponseCaching();
 
             //app.UseHttpCacheHeaders();

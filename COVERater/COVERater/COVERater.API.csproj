@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <Nullable>enable</Nullable>
+    <OutputType>WinExe</OutputType>
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,6 +13,12 @@
     <Compile Remove="Migrations\20220515095338_image links.Designer.cs" />
     <Compile Remove="Migrations\20220712144929_change structure of DB.cs" />
     <Compile Remove="Migrations\20220712144929_change structure of DB.Designer.cs" />
+    <Compile Remove="Migrations\20220807151636_add link for guesses.cs" />
+    <Compile Remove="Migrations\20220807151636_add link for guesses.Designer.cs" />
+    <Compile Remove="Migrations\20220807151755_add link for guesses1.cs" />
+    <Compile Remove="Migrations\20220807151755_add link for guesses1.Designer.cs" />
+    <Compile Remove="Migrations\20220807152929_add link for guesses3.cs" />
+    <Compile Remove="Migrations\20220807152929_add link for guesses3.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

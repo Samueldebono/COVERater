@@ -24,7 +24,10 @@ namespace COVERater.API.Bindings
     public class CreateUserBinding
     {
         [DataMember(Name = "RoleId")]
-        public int RoleId { get; set; }
+        public int RoleId { get; set; }    
+        
+        [DataMember(Name = "Phase")]
+        public byte Phase { get; set; }
 
     }
 }

@@ -8,7 +8,7 @@ using COVERater.API.Models;
 namespace COVERater.API.Dto
 {
     [DataContract]
-    public class UserDto
+    public class UsersResultDto
     {
         [DataMember(Name = "UserId")]
         public int UserId { get; set; }
@@ -29,7 +29,15 @@ namespace COVERater.API.Dto
        [DataMember(Name = "Phase")]
        public byte Phase { get; set; }
 
+       [DataMember(Name = "Email")]
+       public string Email { get; set; }
+
+       [DataMember(Name = "Role")] public int Role { get; set; }
+
+       [DataMember(Name = "Experience")]
+       public int Experience { get; set; }
+
         [DataMember(Name = "Guesses")]
-        public virtual ICollection<UsersGuessDto> Guesses { get; set; }
+        public virtual ICollection<UsersGuess> Guesses { get; set; }
     }
 }

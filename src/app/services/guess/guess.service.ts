@@ -33,7 +33,6 @@ export class GuessService {
   getGuesses(): Observable<UserGuessModel[]> {
     let auth_token = localStorage.getItem('token');
     let id = localStorage.getItem('id');
-    debugger;
     const httpOptions = new HttpHeaders({
       'Content-Type': 'application/json',
       Authorization: `Bearer ${auth_token}`,

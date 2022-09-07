@@ -1,4 +1,5 @@
 import { ExperienceType } from '../enums/enums';
+import { PhaseType } from './userGuess.model';
 
 export interface UserForRegister {
   userName: string;
@@ -7,13 +8,20 @@ export interface UserForRegister {
   experience: ExperienceType;
   roleType: number;
 }
+export interface UserExperienceUpdate {
+  userId: string;
+  experience: ExperienceType;
+}
 
 export interface UserForLogin {
-  roleId?: string;
+  roleId?: number;
   userName: string;
   password: string;
   bearerToken: string;
   status: number;
+  roleType?: number;
+  userStats?: UserModel[];
+  phase?: PhaseType;
 }
 
 export interface UserForLoginForgotPassword {
@@ -22,6 +30,7 @@ export interface UserForLoginForgotPassword {
 
 export interface UserCreate {
   roleId: string;
+  phase: PhaseType;
 }
 
 export interface UpdateUser {
@@ -29,22 +38,18 @@ export interface UpdateUser {
   finishingPercent: number;
   pictureCycled: number;
   time: Date;
-  phase: number;
+  phase: PhaseType;
 }
 
 export interface UserModel {
   userId: number;
   hashUser: string;
-  finishedPhase1Utc: Date;
-  finishedPhase2Utc: Date;
-  finishedPhase3Utc: Date;
-  timePhase1: Date;
-  timePhase2: Date;
-  timePhase3: Date;
-  pictureCycledPhase1: string;
-  pictureCycledPhase2: string;
-  pictureCycledPhase3: string;
-  finishingPercentPhase1: string;
-  finishingPercentPhase2: string;
-  finishingPercentPhase3: string;
+  finishedPhaseUtc: Date;
+  timePhase: Date;
+  pictureCycledPhase: string;
+  finishingPercentPhase: string;
+  phase: PhaseType;
+  email?: string;
+  role?: number;
+  experience?: number;
 }

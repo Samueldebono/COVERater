@@ -1,6 +1,6 @@
 {
-  "name": "coverator-app",
-  "version": "0.0.0",
+  "name": "coverater-app",
+  "version": "1.0.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -10,6 +10,7 @@
   },
   "private": true,
   "dependencies": {
+    "@angular-slider/ngx-slider": "^2.0.3",
     "@angular/animations": "~13.3.0",
     "@angular/cdk": "^13.3.7",
     "@angular/common": "~13.3.0",
@@ -22,7 +23,10 @@
     "@angular/platform-browser-dynamic": "~13.3.0",
     "@angular/router": "~13.3.0",
     "alertifyjs": "^1.13.1",
+    "angular-image-spinner": "^0.1.6",
     "chart.js": "^2.9.3",
+    "jquery": "^3.6.0",
+    "mdb-angular-ui-kit": "^2.3.0",
     "ng2-charts": "^2.2.3",
     "ngx-countdown": "^13.0.0",
     "rxjs": "~7.5.0",

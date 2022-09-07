@@ -5,6 +5,9 @@
 export const environment = {
   production: false,
   baseUrl: 'https://localhost:7054/api',
+  recaptcha: {
+    siteKey: '6Lc4JXAhAAAAALeeJfwfUQSgMA1plfPmGtdMGQb5',
+  },
 };
 
 /*

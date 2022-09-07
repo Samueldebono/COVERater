@@ -4,7 +4,7 @@ export enum ErrorCode {
 }
 export enum ExperienceType {
   student = 1,
-  ThreeYearsOrLess,
-  ThreeToFiveYears,
-  FiveYearsOrMOre,
+  '1-20',
+  '21-100',
+  'more than 100',
 }

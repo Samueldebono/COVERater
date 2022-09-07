@@ -21,7 +21,6 @@ export class UserService {
 
     let auth_token = localStorage.getItem('token');
     let userId = localStorage.getItem('id');
-    console.log('TOKEN: ' + auth_token);
     const httpOptions = new HttpHeaders({
       'Content-Type': 'application/json',
       Authorization: `Bearer ${auth_token}`,
@@ -38,7 +37,6 @@ export class UserService {
     const updateUserJson = JSON.stringify(UserCreate);
 
     let auth_token = localStorage.getItem('token');
-    console.log('TOKEN: ' + auth_token);
     const httpOptions = new HttpHeaders({
       'Content-Type': 'application/json',
       Authorization: `Bearer ${auth_token}`,
@@ -53,7 +51,6 @@ export class UserService {
 
   getUser(id: string): Observable<UserModel> {
     let auth_token = localStorage.getItem('token');
-    console.log('TOKEN: ' + auth_token);
     const httpOptions = new HttpHeaders({
       'Content-Type': 'application/json',
       Authorization: `Bearer ${auth_token}`,
@@ -61,6 +58,18 @@ export class UserService {
     const requestOptions = { headers: httpOptions };
     return this.http.get<UserModel>(
       this.baseUrl + '/V1/user/' + id,
+      requestOptions
+    );
+  }
+  getUsers(): Observable<UserModel[]> {
+    let auth_token = localStorage.getItem('token');
+    const httpOptions = new HttpHeaders({
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${auth_token}`,
+    });
+    const requestOptions = { headers: httpOptions };
+    return this.http.get<UserModel[]>(
+      this.baseUrl + '/V1/users/results/',
       requestOptions
     );
   }

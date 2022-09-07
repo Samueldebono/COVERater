@@ -1,4 +1,9 @@
 <div class="register-wrapper" fxLayout="row" fxLayoutAlign="center center">
+        <div id="Header">
+        <div class="wrapper">
+            <span class="header-home">Coverater</span>
+        </div>
+    </div>
   <mat-card class="box">
     <mat-card-header>
       <mat-card-title>Register</mat-card-title>
@@ -19,6 +24,18 @@
         <br> -->
         <mat-form-field class="register-full-width">
           <input matInput placeholder="Email" formControlName="email">
+                    <span *ngIf="
+                                      !email.valid &&
+                                      (email.touched || userSubmitted)
+                                    " class="error-block">
+            <span *ngIf="email.hasError('required')">
+              Please confirm password
+            </span>
+
+              <span *ngIf="email.hasError('email')">
+                Please provide valid email
+              </span>
+          </span>
         </mat-form-field>
         <!-- <br> -->
         <!-- <mat-form-field class="register-full-width">
@@ -54,7 +71,7 @@
           </mat-select>
         </mat-form-field> -->
       </mat-card-content>
-      <button [disabled]="!registerationForm.valid" type="submit" class="btn btn-primary">Register</button>
+      <button mat-button mat-raised-button [disabled]="!registerationForm.valid" type="submit" class="btn btn-primary">Register</button>
     </form>
   </mat-card>
 </div>

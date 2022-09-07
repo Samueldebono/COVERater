@@ -9,6 +9,7 @@ import { AlertifyService } from '../../services/alertify/alertify.service';
 })
 export class NavBarComponent implements OnInit {
   loggedinUser?: string;
+  adminLoggedinUser?: boolean;
   status?: string;
   constructor(private alertify: AlertifyService, private router: Router) {}
 
@@ -28,7 +29,14 @@ export class NavBarComponent implements OnInit {
     localStorage.removeItem('token');
     localStorage.removeItem('userName');
     localStorage.removeItem('status');
+    localStorage.removeItem('role');
     this.alertify.success('You are logged out!');
     this.router.navigate(['/login'], {});
+  }
+
+  adminLoggedin() {
+    this.adminLoggedinUser =
+      localStorage.getItem('userName') && localStorage.getItem('role') === '4';
+    return this.adminLoggedinUser;
   }
 }

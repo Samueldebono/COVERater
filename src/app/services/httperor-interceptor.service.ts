@@ -16,7 +16,6 @@ import { AlertifyService } from './alertify/alertify.service';
 export class HttpErrorInterceptorService implements HttpInterceptor {
   constructor(private alertify: AlertifyService) {}
   intercept(request: HttpRequest<any>, next: HttpHandler) {
-    console.log('HTTP Request started');
     return next.handle(request).pipe(
       retryWhen((error) => this.retryRequest(error, 5)),
       catchError((error: HttpErrorResponse) => {

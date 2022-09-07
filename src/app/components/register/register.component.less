@@ -1,3 +1,12 @@
+@base-url: "src/assets/images";
+
+@font-face {
+  font-family: "Palmsprings";
+  src: local("Palmsprings"),
+    url(../../../assets/fonts/PalmspringsPersonalUseRegular-d9VDV.ttf)
+      format("truetype");
+}
+
 html {
   height: 100%;
 }
@@ -27,6 +36,12 @@ body {
   display: flex;
   place-content: center;
   align-items: center;
+    background-image: url("@{base-url}/background.jpg");
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+
 
   .register-form {
     min-width: 100%;
@@ -100,4 +115,35 @@ body {
   top: -20px;
   opacity: .8;
   z-index: -1;
+}
+
+.mat-button{
+  background-color: #192BC2;
+}
+
+#Header {
+  /*margin-bottom: 48px;*/
+  position: relative;
+  width: 50%;
+  height: 110px;
+  z-index: 1;
+}
+
+.wrapper {
+  margin: 30px auto;
+  position: relative;
+  width: 100%;
+  z-index: 1;
+  text-align: center;
+}
+
+.header-home {
+  font-size: 82px;
+  letter-spacing: -2px;
+  text-align: center;
+  padding-top: 30px;
+  // font-weight: 700;
+  font-family: "Palmsprings", "Times New Roman", Times, serif;
+  // text-shadow: 2px 2px rgb(0, 0, 0);
+  color: whitesmoke;
 }

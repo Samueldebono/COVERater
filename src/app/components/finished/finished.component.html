@@ -1,49 +1,52 @@
+<div class="finish-wrapper">
   <form class="quiz-form" [formGroup]="finishForm" (ngSubmit)="onSubmit()">
     <div id="Header">
-        <div class="wrapper">
-            <span class="header-home">Congratulations</span>
-        </div>
+      <div class="wrapper">
+        <span class="header-home">Congratulations</span>
+      </div>
     </div>
 
     <div class="stat-cards">
-        <div class="statcard3">
-            <div class="center">
-              <div class="chartjs-container">
-    <canvas baseChart
-        [datasets]="lineChartData"
-        [labels]="lineChartLabels"
-        [options]="lineChartOptions"
-        [colors]="lineChartColors"
-        [legend]="lineChartLegend"
-        [chartType]="lineChartType"
-        [plugins]="lineChartPlugins"
-        (chartHover)="chartHovered($event)"
-        >
-    </canvas>
-</div>
-                <div class="btn-1">
-                    <button type="submit" class="btn btn-primary myButton">HOME</button>
-                </div>
-                <div class="btn-1">
-                    <button (click)="sendDetails()" class="myButton">Send Results</button>
-                </div>
-            </div>
+      <div class="statcard3">
+        <div class="center">
+          <div class="chartjs-container">
+            <canvas
+              baseChart
+              [datasets]="lineChartData"
+              [labels]="lineChartLabels"
+              [options]="lineChartOptions"
+              [colors]="lineChartColors"
+              [legend]="lineChartLegend"
+              [chartType]="lineChartType"
+              [plugins]="lineChartPlugins"
+              (chartHover)="chartHovered($event)"
+            >
+            </canvas>
+          </div>
+          <div class="btn-1">
+            <button type="submit" class="btn btn-primary myButton">{{finishBtnText}}</button>
+          </div>
+          <!-- <div class="btn-1">
+            <button (click)="sendDetails()" class="myButton">
+              Send Results
+            </button>
+          </div> -->
         </div>
+      </div>
 
-        <div class="statcard2">
-            <img src="../../../assets/images/timer.png" class="icon">
-            <p class="heading">Total time</p>
-            <p class="content">{{totalTime}}</p>
-        </div>
+      <div class="statcard2">
+        <img src="../../../assets/images/timer.png" class="icon" />
+        <p class="heading">Total time</p>
+        <p class="content">{{ totalTime }}</p>
+      </div>
 
-        <div class="statcard2">
-            <img src="../../../assets/images/accuracy.png" class="icon" />
-            <p class="heading">Average time per image</p>
-            <p class="content">{{averageTime}}</p>
-        </div>
-
+      <div class="statcard2">
+        <img src="../../../assets/images/accuracy.png" class="icon" />
+        <p class="heading">Average time per image</p>
+        <p class="content">{{ averageTime }}</p>
+      </div>
     </div>
-    <div id="Content" class="wrapper">
-    </div>
+    <div id="Content" class="wrapper"></div>
     <div id="overlay"></div>
   </form>
+</div>

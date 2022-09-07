@@ -29,6 +29,7 @@ export class RegisterComponent implements OnInit {
   showClientFields: boolean;
   user: UserForRegister;
   userLogin: UserForLogin;
+  userRole: number;
 
   constructor(
     private fb: FormBuilder,
@@ -40,30 +41,19 @@ export class RegisterComponent implements OnInit {
 
   ngOnInit() {
     this.createRegisterationForm();
+    this.userRole = this.route.snapshot.params['role'];
   }
 
   createRegisterationForm() {
-    this.registerationForm = this.fb.group(
-      {
-        // userName: [null, Validators.required],
-        email: [
-          null,
-          [Validators.required, Validators.email],
-          [UserValidator.createValidator(this.authServices)],
-        ],
-        // password: [null, [Validators.required, Validators.minLength(8)]],
-        // confirmPassword: [null, [Validators.required]],
-        // experience: [null, [Validators.required, Validators.maxLength(10)]],
-      }
-      // { validators: this.passwordMatchingValidator }
-    );
+    this.registerationForm = this.fb.group({
+      // userName: [null, Validators.required],
+      email: [
+        null,
+        [Validators.required, Validators.email],
+        [UserValidator.createValidator(this.authServices)],
+      ],
+    });
   }
-
-  // passwordMatchingValidator(fc: AbstractControl): ValidationErrors | null {
-  //   return fc.get('password')?.value === fc.get('confirmPassword')?.value
-  //     ? null
-  //     : { notmatched: true };
-  // }
 
   onSubmit() {
     this.userSubmitted = true;
@@ -71,7 +61,6 @@ export class RegisterComponent implements OnInit {
       this.authServices.registerUser(this.userData()).subscribe((member) => {
         this.onReset();
         this.alertify.success('Congrats, you are successfully registered');
-
         this.router.navigate(['/login/1']);
       });
     } else {
@@ -96,32 +85,9 @@ export class RegisterComponent implements OnInit {
       email: this.email.value,
       password: '',
       experience: ExperienceType.student,
-      // this.convertExperience(
-      //   this.experience.value
-      // ),
-      roleType: 2,
+      roleType: this.userRole,
     });
   }
-
-  convertExperience(value: string) {
-    switch (value) {
-      case '>5 years':
-        return ExperienceType.FiveYearsOrMOre;
-      case '3-5 years':
-        return ExperienceType.ThreeToFiveYears;
-      case '1-3 years':
-        return ExperienceType.ThreeYearsOrLess;
-      default:
-        return ExperienceType.student;
-    }
-  }
-
-  // ------------------------------------
-  // Getter methods for all form controls
-  // ------------------------------------
-  // get userName() {
-  //   return this.registerationForm.get('userName') as FormControl;
-  // }
 
   get email() {
     return this.registerationForm.get('email') as FormControl;

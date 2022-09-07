@@ -32,13 +32,26 @@ export class DialogComponent implements OnInit {
   AnswerSuccess = AnswerSuccess;
 
   ngOnInit(): void {
-    this.percentage = (this.data.percentage * 100).toString();
-    this.correctPercentage = (this.data.correctPercentage * 100).toString();
+    this.percentage = this.cleanPercentage(
+      (this.data.percentage * 100).toFixed(2).toString()
+    );
+    this.correctPercentage = this.cleanPercentage(
+      (this.data.correctPercentage * 100).toFixed(2).toString()
+    );
     this.successful = this.data.answer;
     this.dialogBox = this.fb.group({});
   }
 
   onNoClick(): void {
     this.dialogRef.close();
+  }
+
+  cleanPercentage(num: string): string {
+    if (num.substring(num.length - 2) === '00') {
+      num = num.substring(0, num.length - 3);
+    } else if (num.substring(num.length - 1) == '0') {
+      num = num.substring(0, num.length - 1);
+    }
+    return num;
   }
 }

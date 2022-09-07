@@ -35,8 +35,8 @@
       <mat-card-content *ngIf="reRouted">
         <p>If you are looking for your passwords please check your email (possibly in your junk)</p>
       </mat-card-content>
-      <button mat-button mat-raised-button [disabled]="!loginForm.valid" type="submit" class="btn btn-primary">Login</button>
-      <button  mat-button mat-raised-button type="button" (click)="resetPassword()" class="btn btn-primary">Forgot Password</button>
+      <button mat-button mat-raised-button [disabled]="!loginForm.valid"  type="submit" class="btn btn-primary">Login</button>
+      <button  mat-button mat-raised-button type="button" class="btn btn-primary" (click)="resetPassword()" >Forgot Password</button>
     </form>
   </mat-card>
 </div>

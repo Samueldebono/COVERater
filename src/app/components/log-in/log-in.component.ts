@@ -33,11 +33,11 @@ export class LogInComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.createLoginForm();
-    //passed from register page
-    this.passedEmail = history.state.data.email;
-    this.loginForm.controls['userName'].setValue(this.passedEmail);
-    this.reRouted = this.route.snapshot.params['id'] == 1;
+                localStorage.removeItem('token');
+                localStorage.removeItem('userName');
+                localStorage.removeItem('id');
+                localStorage.removeItem('role');
+                this.createLoginForm();
   }
 
   createLoginForm() {
@@ -53,21 +53,23 @@ export class LogInComponent implements OnInit {
     if (this.loginForm.valid) {
       this.authService.authUser(this.loginForm.value).subscribe(
         (response) => {
-          console.log(response);
-          const user = response;
+          const user: UserForLogin = response;
 
           if (user) {
-            var userCreate: UserCreate = {
-              roleId: user.roleId,
-            };
-            //create new userStats
-            this.userService.createUser(userCreate).subscribe(() => {
-              localStorage.setItem('token', user.bearerToken);
-              localStorage.setItem('userName', user.userName);
-              localStorage.setItem('id', user.roleId);
-              this.alertify.success('Login Successful');
-              this.router.navigate(['/home/']);
-            });
+            localStorage.setItem('token', user.bearerToken);
+            localStorage.setItem('userName', user.userName);
+            localStorage.setItem('id', user.roleId.toString());
+            localStorage.setItem('role', user.roleType.toString());
+            this.alertify.success('Login Successful');
+            if (user.roleType == 1 || user.userStats.length > 0) {
+              this.router.navigate(['/home/'], { state: { data: { user } } });
+            } else if (user.roleType == 2) {
+              this.router.navigate(['/experience/'], {
+                state: { data: { user } },
+              });
+            } else {
+              this.router.navigate(['/home/'], { state: { data: { user } } });
+            }
           }
         },
         (error) => {

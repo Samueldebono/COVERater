@@ -8,6 +8,7 @@ import { HttpErrorInterceptorService } from './services/httperor-interceptor.ser
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AngularMaterialModule } from './angular-material.module';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { NgxSliderModule } from '@angular-slider/ngx-slider';
 /* FormsModule */
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 /* Angular Flex Layout */
@@ -22,10 +23,16 @@ import { AlertifyService } from './services/alertify/alertify.service';
 import { StageOneComponent } from './components/stageOne/stageOne.component';
 /* Timer */
 import { CountdownModule } from 'ngx-countdown';
-import { ChooseTrainingComponent } from './components/choose-training/choose-training.component';
 import { FinishedComponent } from './components/finished/finished.component';
 import { DialogComponent } from './components/dialog/dialog.component';
 import { ChartsModule } from 'ng2-charts';
+import { HomeComponent } from './components/home/home.component';
+import { ExperienceComponent } from './components/experience/experience.component';
+
+import { MdbCarouselModule } from 'mdb-angular-ui-kit/carousel';
+import { CommonModule } from '@angular/common';
+import { MatTableModule } from '@angular/material/table';
+import { AdminResultsComponent } from './components/admin-results/admin-results.component';
 
 @NgModule({
   declarations: [
@@ -37,9 +44,11 @@ import { ChartsModule } from 'ng2-charts';
     ForgotPasswordComponent,
     NavBarComponent,
     StageOneComponent,
-    ChooseTrainingComponent,
     FinishedComponent,
     DialogComponent,
+    HomeComponent,
+    ExperienceComponent,
+    AdminResultsComponent,
   ],
   imports: [
     BrowserModule,
@@ -52,6 +61,10 @@ import { ChartsModule } from 'ng2-charts';
     HttpClientModule,
     CountdownModule,
     ChartsModule,
+    NgxSliderModule,
+    MdbCarouselModule,
+    CommonModule,
+    MatTableModule,
   ],
   providers: [
     {

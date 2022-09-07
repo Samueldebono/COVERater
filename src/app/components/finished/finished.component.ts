@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
-import { UserModel } from 'src/app/models/user.model';
+import { UserCreate, UserModel } from 'src/app/models/user.model';
 import { UserGuessModel } from 'src/app/models/userGuess.model';
 import { GuessService } from 'src/app/services/guess/guess.service';
 import { UserService } from 'src/app/services/user/user.service';
@@ -23,6 +23,8 @@ export class FinishedComponent implements OnInit {
   userGuesses: UserGuessModel[];
   user: UserModel;
   userId: any;
+  finishBtnText: string;
+  firstPhase: boolean; //round 1,2,3
 
   constructor(
     private fb: FormBuilder,
@@ -33,10 +35,9 @@ export class FinishedComponent implements OnInit {
     private router: Router
   ) {
     this.userId = this.location.getState();
-    console.log(this.userId);
   }
   // Array of different segments in chart
-  lineChartData: ChartDataSets[] = [{ data: [], label: 'Product A' }];
+  lineChartData: ChartDataSets[] = [{ data: [], label: '' }];
 
   //Labels shown on the x-axis
   lineChartLabels: Label[] = [];
@@ -69,12 +70,34 @@ export class FinishedComponent implements OnInit {
   lineChartPlugins: any = [];
 
   ngOnInit() {
+    this.finishBtnText = 'Next';
     this.finishForm = this.fb.group({});
     this.calculate();
   }
 
   onSubmit() {
-    this.router.navigate(['/home/']);
+    if (this.finishBtnText) {
+      this.userService
+        .getUser(localStorage.getItem('id'))
+        .subscribe((userStats) => {
+          const phase =
+            userStats !== undefined && userStats !== null
+              ? userStats.phase + 1
+              : 1;
+          var userCreate: UserCreate = {
+            roleId: localStorage.getItem('id'),
+            phase: phase,
+          };
+          //create new userStats
+          this.userService.createUser(userCreate).subscribe((userModel) => {
+            this.router.navigate(['/stageOne/' + localStorage.getItem('id')], {
+              state: { data: { userModel } },
+            });
+          });
+        });
+    } else {
+      this.router.navigate(['/home/']);
+    }
   }
 
   sendDetails() {
@@ -88,16 +111,18 @@ export class FinishedComponent implements OnInit {
       .getUser(localStorage.getItem('id'))
       .subscribe((results) => {
         this.user = results;
-
+        this.firstPhase = this.user.phase < 3;
+        if (!this.firstPhase) {
+          this.finishBtnText = 'Home';
+        }
         this.guessService.getGuesses().subscribe((guesses) => {
           this.userGuesses = guesses;
 
           var imageNumberArray: any[] = [];
           var guessResultsArray: any[] = [];
-
           var time =
-            this.user.timePhase2 != null || undefined
-              ? this.user.timePhase2
+            this.user.timePhase != null || undefined
+              ? this.user.timePhase
               : new Date();
 
           //convert time into seconds
@@ -105,12 +130,24 @@ export class FinishedComponent implements OnInit {
           seconds += new Date(time).getMinutes() * 60;
           seconds += new Date(time).getHours() * 3600;
 
+          var time2 =
+            this.user.finishedPhaseUtc != null || undefined
+              ? this.user.finishedPhaseUtc
+              : new Date();
+
+          var seconds2 = new Date(time2).getSeconds();
+          seconds2 += new Date(time2).getMinutes() * 60;
+          seconds2 += new Date(time2).getHours() * 3600;
+
+          seconds = seconds2 - seconds;
+
           //Get GuessPercentage - Actual Answer for table
           let i: number = 1;
           var guesses = this.userGuesses.sort((x) => x.usersGuessId);
           guesses.forEach((item) => {
-            var result =
-              (item.guessPercentage - item.subImage.coverageRate) * 100;
+            var result = Math.round(
+              (item.guessPercentage - item.subImage.coverageRate) * 100
+            );
             guessResultsArray.push(result);
             imageNumberArray.push(i);
             i++;
@@ -118,10 +155,10 @@ export class FinishedComponent implements OnInit {
 
           //Total Time
           this.totalTime = this.convertHMS(seconds);
-
           //Average Time
           var average = seconds / imageNumberArray.length;
           this.averageTime = this.convertHMS(average);
+
           this.lineChartData[0].data = guessResultsArray;
           this.lineChartLabels = imageNumberArray;
         });
@@ -154,11 +191,7 @@ export class FinishedComponent implements OnInit {
     return h.slice(0, 2) + ':' + m.slice(0, 2) + ':' + s.slice(0, 2); // Return is HH : MM : SS
   }
   // events
-  chartClicked({ event, active }: { event: MouseEvent; active: {}[] }): void {
-    console.log(event, active);
-  }
+  chartClicked({ event, active }: { event: MouseEvent; active: {}[] }): void {}
 
-  chartHovered({ event, active }: { event: MouseEvent; active: {}[] }): void {
-    console.log(event, active);
-  }
+  chartHovered({ event, active }: { event: MouseEvent; active: {}[] }): void {}
 }

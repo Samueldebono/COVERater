@@ -11,9 +11,10 @@
       <h1 class="alert">Awesome!</h1>
       <p>PERFECT percentage guess!!</p>
       <p>Your answer was: {{ percentage }}%</p>
-      <p>The herbivory percentage is: {{ correctPercentage }}%</p>
-    </div>
+      <p>The cover estimate percentage is: {{ correctPercentage }}%</p>
+
     <button mat-button type="submit" cdkFocusInitial>Next Image</button>
+    </div>
   </form>
 </div>
 <div *ngIf="successful === AnswerSuccess.close" id="almost-box">
@@ -27,11 +28,12 @@
     <div class="shadow scale"></div>
     <div class="message">
       <h1 class="alert">So close!</h1>
-      <p>That's close enough to be correct!</p>
+      <p>So close!</p>
       <p>Your answer was: {{ percentage }}%</p>
-      <p>The herbivory percentage is: {{ correctPercentage }}%</p>
-    </div>
+      <p>The cover estimate percentage is: {{ correctPercentage }}%</p>
+
     <button mat-button type="submit" cdkFocusInitial>Next Image</button>
+    </div>
   </form>
 </div>
 <div *ngIf="successful === AnswerSuccess.far" id="error-box">
@@ -46,8 +48,9 @@
         <h1 class="alert">Whoops!</h1>
         <p>That is not the right answer</p>
         <p>Your answer was: {{ percentage }}%</p>
-        <p>The correct herbivory percentage is: {{ correctPercentage }}%</p>
-      </div>
+        <p>The cover estimate percentage is: {{ correctPercentage }}%</p>
+
      <button mat-button type="submit" cdkFocusInitial>Next Image</button>
+      </div>
   </form>
 </div>

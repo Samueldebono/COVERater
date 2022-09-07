@@ -1,59 +1,57 @@
-<div class="quiz-wrapper">
-  <form class="quiz-form" [formGroup]="quizForm" (ngSubmit)="onSubmit()">
-    <mat-grid-list cols="2" rowHeight="400px" gutterSize="15px">
-      <mat-grid-tile>
-        <div class="species-image-tile">
-          <p>What % of this species</p>
-          <img [src]="currentSubUrl" class="shadow-boarder" style="height: 200px; width: 300px" />
-        </div>
-      </mat-grid-tile>
-      <mat-grid-tile>
-        <div>
-          <p>Covers this image</p>
-          <img [src]="currentUrl" style="height: 300px; width: 400px" />
-          </div>
-        </mat-grid-tile>
-    </mat-grid-list>
-    <div class="slider-section">
-      <mat-slider
-  thumbLabel
-  [displayWith]="formatLabel"
-  tickInterval="1000"
- min="0"
-        max="100"
-        step="0.5"
-        value="0"
-  aria-label="units"
-
-        ></mat-slider>
-      <!-- <mat-slider
-        min="0"
-        max="100"
-        step="0.5"
-        value="0"
-        #matslider
-        (change)="sliderUpdate($event)"
-      ></mat-slider> -->
-      <div>
-      <!-- <div>
-        {{ guessPercent }}
-      </div> -->
+<div class="stage-one-wrapper" fxLayout="row" fxLayoutAlign="center center">
+<form class="quiz-form" (ngSubmit)="onSubmit()">
+  <!-- [formGroup]="quizForm"  -->
+  <!-- <mat-grid-list cols="2" rowHeight="2:2">
+      <mat-grid-tile> -->
+  <div>
+  <div class="species-image-parent">
+    <div class="species-image-tile">
+      <h3>what is the percent cover of this species</h3>
+      <!-- <img
+        [src]="currentSubUrl"
+        class="shadow-boarder"
+        style="height: 200px; width: 300px"
+      />       -->
+      <!-- <img *ngIf="loading" src="/assets/loading.gif" alt="loading" /> -->
+      <mat-spinner *ngIf="loading" alt="loading"></mat-spinner>
+      <img [hidden]="loading" (load)="onLoad()"
+        [src]="currentSubUrl"
+        class="shadow-boarder img"
+      />
     </div>
-    <!-- <div>
-      <p>{{ display }} Seconds</p>
-    </div> -->
     <div>
+      <h3>in this image</h3>
+      <!-- <img [src]="currentUrl" style="height: 300px; width: 400px" /> -->
+      <mat-spinner *ngIf="loading2" alt="loading"></mat-spinner>
+      <img [hidden]="loading2" (load)="onLoad2()" [src]="currentUrl" class="img-large" />
+    </div>
+    </div>
+  </div>
+  <br>
+  <div class="slider-section">
+   <ngx-slider [options]="options" [formControl]="sliderControl" name="options" ngDefaultControl></ngx-slider>
+    <br>
+    <h2>YOUR CURRENT ESTIMATE: {{sliderControl.value}}%</h2>
+    <div *ngIf="phase !== 2">
+      <h2 *ngIf="this.userGuesses !== undefined"> {{this.userGuesses.length + 1}}/50</h2>
+      <h2 *ngIf="this.userGuesses === undefined"> 1/50</h2>
+    </div>
+    <br />
+    <div fxLayout="row" fxLayoutAlign="center center">
       <button
         [disabled]="false"
-        type="submit"
+        mat-button
+        mat-raised-button
+        type="button"
         class="btn btn-primary"
+        (click)="onSubmit()"
       >
         Submit
       </button>
     </div>
-    </div>
-    <div *ngIf="showProgress" class="accuracy">
-      <p>{{ finalPercentage }}% accuracy from the last 10 images</p>
-    </div>
-  </form>
+  </div>
+  <div *ngIf="showProgress" class="accuracy">
+    <p>{{ finalPercentage }}% accuracy from the last 10 images</p>
+  </div>
+</form>
 </div>

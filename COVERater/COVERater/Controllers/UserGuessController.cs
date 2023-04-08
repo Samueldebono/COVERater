@@ -15,7 +15,6 @@ namespace COVERater.API.Controllers
     [Route("api/V1")]
     [ApiController]
     [HttpCacheExpiration(CacheLocation = CacheLocation.Public, MaxAge = 1)]
-    //[HttpCacheValidation(MustRevalidate = true)]
     [Produces("application/json")]
     public class UserGuessController : ControllerBase
     {
@@ -41,6 +40,7 @@ namespace COVERater.API.Controllers
             var result = _mapper.Map<List<UsersGuess>>(guesses);
             return Ok(result);
         }
+
         [Authorize]
         [HttpPost("usersGuess", Name = "CreateUsersGuess")]
         public async Task<IActionResult> CreateUserGuess([FromBody]UserGuessBinding binding)
@@ -65,8 +65,7 @@ namespace COVERater.API.Controllers
                 UserStats = userStats
 
             };
-
-            //userStats.Guesses.Add(userGuess);
+            
             await _CoveraterRepository.CreateUserGuess(userGuess);
 
             return Ok(userGuess);
@@ -84,10 +83,21 @@ namespace COVERater.API.Controllers
                 return NotFound();
 
             var userGuesses = await _CoveraterRepository.GetUserGuesses();
-            var result = userGuesses.Where(x => x.UserId == userStats.UserId).ToList(); //userStats.Guesses;
-            //if (phase.HasValue)
-            //   return (IActionResult)result.Where(x => x.Phase == phase.Value);
+            var result = userGuesses.Where(x => x.UserId == userStats.UserId).OrderByDescending(x=>x.UsersGuessId).ToList(); //userStats.Guesses;
+            if (phase.HasValue && phase.Value == 2)
+                return Ok(result.Take(10));
 
+            return Ok(result);
+        }
+
+        [Authorize]
+        [HttpCacheIgnore]
+        [HttpGet("getGuessesById/{userStatId}")]
+        public async Task<IActionResult> GetSingleUserGuess(int userStatId)
+        {
+            var userGuesses = await _CoveraterRepository.GetUserGuesses();
+            var result = userGuesses.Where(x => x.UserId == userStatId).ToList(); //userStats.Guesses;
+         
             return Ok(result);
         }
     }

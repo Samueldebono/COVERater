@@ -16,4 +16,5 @@ namespace COVERater.API.Models
 
         public string UserName { get; set; }
     }
+
 }

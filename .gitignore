@@ -383,3 +383,4 @@ msbuild.wrn
 
 # Visual Studio 2015
 .vs/
+/COVERater/COVERater/appsettings.json

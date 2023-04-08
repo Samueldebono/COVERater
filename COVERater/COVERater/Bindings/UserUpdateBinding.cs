@@ -12,13 +12,18 @@ namespace COVERater.API.Bindings
         [DataMember(Name = "FinishedUtc")]
         public DateTime? FinishedUtc { get; set; }
         [DataMember(Name = "FinishingPercent")]
-        public decimal FinishingPercent { get; set; }
+        public decimal? FinishingPercent { get; set; }
         [DataMember(Name = "PictureCycled")]
-        public int PictureCycled { get; set; }
+        public int? PictureCycled { get; set; }
         [DataMember(Name = "Time")]
-        public DateTime Time { get; set; }
+        public DateTime? Time { get; set; }
         [DataMember(Name = "Phase")]
-        public byte Phase { get; set; }
+        public byte? Phase { get; set; }
+        [DataMember(Name = "Deleted")]
+        public bool? Deleted { get; set; }
+
+        [DataMember(Name = "UserStatsId")]
+        public int? UserStatsId { get; set; }
     }
     [DataContract]
     public class CreateUserBinding

@@ -27,9 +27,11 @@ namespace COVERater.API.Dto
        [DataMember(Name = "FinishingPercentPhase")]
         public decimal? FinishingPercentPhase { get; set; }        
        [DataMember(Name = "Phase")]
-       public byte Phase { get; set; }
+       public byte Phase { get; set; }  
+       [DataMember(Name = "Experience")]
+       public int Experience { get; set; }
 
         [DataMember(Name = "Guesses")]
-        public virtual ICollection<UsersGuessDto> Guesses { get; set; }
+        public virtual ICollection<UsersGuess> Guesses { get; set; }
     }
 }

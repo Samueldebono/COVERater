@@ -39,7 +39,6 @@ namespace COVERater.API.Controllers
             return Ok(image);
         }
 
-        //[Authorize]
         [AllowAnonymous]
         [HttpGet("images")]
         public ActionResult<List<ImageDto>> GetAllImages()

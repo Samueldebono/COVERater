@@ -17,6 +17,9 @@ namespace COVERater.API.Models
         public int? PictureCycledPhase { get; set; }
         public decimal? FinishingPercentPhase { get; set; }
         public byte Phase { get; set; }
+
+        public bool? Deleted { get; set; }
+        public DateTime? DeletedDate { get; set; }
         public virtual ICollection<UsersGuess> Guesses { get; set; }
     }
 }

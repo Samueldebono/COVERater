@@ -17,6 +17,11 @@ namespace COVERater.API.Bindings
         public byte Experience { get; set; }
     }
 
+    public class AuthRoleUpdateBinding
+    {
+        public int UserId { get; set; }
+    }
+
     public class ResetPasswordBinding
     { 
         public string Email { get; set; }

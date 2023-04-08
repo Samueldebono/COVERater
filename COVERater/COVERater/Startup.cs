@@ -39,16 +39,9 @@ namespace COVERater.API
 
             });
 
-            //services.AddHttpCacheHeaders(exModelOptions =>
-            //{
-            //    exModelOptions.MaxAge = 1;
-            //    exModelOptions.CacheLocation = Marvin.Cache.Headers.CacheLocation.Private;
-            //},
-            //      validationModelOptions => { validationModelOptions.MustRevalidate = true; });
-            //services.AddResponseCaching();
 
-            var connection = Configuration.GetConnectionString("development");
-            //var connection = Configuration.GetConnectionString("release");
+            //var connection = Configuration.GetConnectionString("development");
+            var connection = Configuration.GetConnectionString("release");
             services.AddDbContext<CoveraterContext>(options => options.UseSqlServer(connection));
 
             services.AddScoped<ICoveraterRepository, CoveraterRepository>();
@@ -63,7 +56,6 @@ namespace COVERater.API
             services.AddControllers(setupAction =>
             {
                 setupAction.ReturnHttpNotAcceptable = true;
-                //setupAction.CacheProfiles.Add("240SecondsCacheProfile", new CacheProfile() { Duration = 1 });
             })
                 .AddNewtonsoftJson(setupContext =>
                 {
@@ -76,9 +68,9 @@ namespace COVERater.API
                     {
                         var problemDetails = new ValidationProblemDetails(context.ModelState)
                         {
-                            Type = "http://localhost:7054",
+                            //Type = "http://localhost:7054",
 
-                            //Type = "https://coverater.com/modelvalidationproblem",
+                            Type = "https://coverater.com/modelvalidationproblem",
                             Title = "One or more model validation errors occurred.",
                             Status = StatusCodes.Status422UnprocessableEntity,
                             Detail = "See the errors property for details.",
@@ -163,19 +155,10 @@ namespace COVERater.API
                     );
                 });
             }
-
-            //TO REMOVE
-                            app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c =>
-                {
-                    c.SwaggerEndpoint("swagger/v1/swagger.json", "Coverater");
-                    c.RoutePrefix = string.Empty;
-                });
+            
+            app.UseSwagger();
 
             app.UseResponseCaching();
-
-            //app.UseHttpCacheHeaders();
 
             app.UseRouting();
             app.UseCors("CorsPolicy");

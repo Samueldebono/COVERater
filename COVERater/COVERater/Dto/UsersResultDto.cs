@@ -37,6 +37,9 @@ namespace COVERater.API.Dto
        [DataMember(Name = "Experience")]
        public int Experience { get; set; }
 
+       [DataMember(Name = "AuthRoleId")]
+       public int AuthRoleId { get; set; }
+
         [DataMember(Name = "Guesses")]
         public virtual ICollection<UsersGuess> Guesses { get; set; }
     }

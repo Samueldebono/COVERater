@@ -52,37 +52,6 @@ namespace COVERater.API.Migrations
                     b.ToTable("AuthUsers");
                 });
 
-            modelBuilder.Entity("COVERater.API.Models.EmailLogs", b =>
-                {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("EmailSent")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Response")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("Time")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("id");
-
-                    b.ToTable("EmailLogs");
-                });
-
             modelBuilder.Entity("COVERater.API.Models.Image", b =>
                 {
                     b.Property<int>("ImageId")
@@ -116,6 +85,35 @@ namespace COVERater.API.Migrations
                     b.HasKey("ImageId");
 
                     b.ToTable("Image");
+                });
+
+            modelBuilder.Entity("COVERater.API.Models.Log", b =>
+                {
+                    b.Property<int>("LogId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("After")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Before")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Function")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("LogId");
+
+                    b.ToTable("Logs");
                 });
 
             modelBuilder.Entity("COVERater.API.Models.SubImage", b =>
@@ -186,28 +184,6 @@ namespace COVERater.API.Migrations
                     b.ToTable("Tokens");
                 });
 
-            modelBuilder.Entity("COVERater.API.Models.UserEmails", b =>
-                {
-                    b.Property<int>("UserEmailId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("CreatedUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("PrizeSent")
-                        .HasColumnType("bit");
-
-                    b.HasKey("UserEmailId");
-
-                    b.ToTable("UserEmails");
-                });
-
             modelBuilder.Entity("COVERater.API.Models.UserStats", b =>
                 {
                     b.Property<int>("UserId")
@@ -219,6 +195,12 @@ namespace COVERater.API.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("DeletedDate")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("FinishedPhaseUtc")
@@ -272,6 +254,21 @@ namespace COVERater.API.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("UsersGuess");
+                });
+
+            modelBuilder.Entity("COVERater.API.Models.VisitCounter", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("Count")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("VisitCount");
                 });
 
             modelBuilder.Entity("COVERater.API.Models.SubImage", b =>

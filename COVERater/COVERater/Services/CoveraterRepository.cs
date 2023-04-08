@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using COVERater.API.Entities;
 using COVERater.API.Models;
@@ -13,25 +14,15 @@ namespace COVERater.API.Services
 {
     public class CoveraterRepository : ICoveraterRepository, IDisposable
     {
-        private readonly CoveraterContext _context; 
+        private readonly CoveraterContext _context;
 
-        public CoveraterRepository(CoveraterContext context,  IOptions<AppSettings> appSettings )
+        public CoveraterRepository(CoveraterContext context, IOptions<AppSettings> appSettings)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
-           
+
         }
 
         #region Role
-        public AuthUsers Authenticate(string username)
-        {
-            var user = _context.AuthUsers.Include(x=>x.UserStats).FirstOrDefault(x => x.UserName == username);
-
-            if (user == null)
-                throw new ArgumentNullException(nameof(username));
-            
-            return user;
-
-        }
 
         public AuthUsers CreateAuthUsers(AuthUsers authUsers)
         {
@@ -45,23 +36,6 @@ namespace COVERater.API.Services
             return newAuthUser.Entity;
         }
 
-        public AuthUsers ResetPassword(AuthUsers authUsers)
-        {
-            if (authUsers == null)
-            {
-                throw new ArgumentNullException(nameof(authUsers));
-            }
-
-            var user = _context.AuthUsers.FirstOrDefaultAsync(x=>x.Email == authUsers.Email);
-
-            if (user != null)
-            {
-                user.Result.Password = authUsers.Password;
-                _context.SaveChanges();
-            }
-            
-            return user.Result;
-        }
 
         public AuthUsers? AuthUsers(string email)
         {
@@ -71,7 +45,7 @@ namespace COVERater.API.Services
             }
 
             var authUsers = _context.AuthUsers.FirstOrDefault(x => x.Email.ToLower() == email.ToLower());
-            
+
             return authUsers;
         }
 
@@ -79,10 +53,10 @@ namespace COVERater.API.Services
         {
 
             var authUsers = _context.AuthUsers.Include(x => x.UserStats)
-                .ThenInclude(x=>x.Guesses)
-                .ThenInclude(x=>x.SubImage)
+                .ThenInclude(x => x.Guesses)
+                .ThenInclude(x => x.SubImage)
                  .FirstOrDefault(x => x.RoleId == roleId);
-            
+
             return authUsers;
         }
         public IEnumerable<AuthUsers> GetAuthUsers()
@@ -91,7 +65,7 @@ namespace COVERater.API.Services
             var authUsers = _context.AuthUsers.Include(x => x.UserStats)
                 .ThenInclude(x => x.Guesses)
                 .ThenInclude(x => x.SubImage).ToList();
-                 
+
             
             return authUsers;
         }
@@ -100,84 +74,23 @@ namespace COVERater.API.Services
 
         #region User
 
-
-        public IEnumerable<UserStats> GetUsers()
-        {
-            var query = _context.UserStats.Include(x => x.Guesses).ThenInclude(x => x.SubImage);
-            
-            return query.ToList<UserStats>();
-        }        
-        public UserStats GetUser(Guid userId)
-        {
-            //var user = _context.UserStats.Include(x => x.Guesses).FirstOrDefault(x=>x.UserId == userId) ;
-
-            //if(user == null)
-            //    throw new ArgumentNullException(nameof(userId));
-
-            //return user;
-            return new UserStats();
-        }
-       
         public UserStats GetUser(int userId)
         {
             var user = _context.UserStats
                 .Include(x => x.Guesses)
-                .FirstOrDefault(x=>x.UserId == userId);
-            
-            if(user == null)
+                .FirstOrDefault(x => x.UserId == userId);
+
+            if (user == null)
                 throw new ArgumentNullException(nameof(userId));
 
 
             return user;
         }
 
-        public UserStats CreateUser(UserStats user)
-        {
-            if (user == null)
-            {
-                throw new ArgumentNullException(nameof(user));
-            }
-
-            var newUser = _context.UserStats.Add(user);
-            return newUser.Entity;
-        }
-
-        public void UpdateUser(UserStats user)
-        {
-           // throw new NotImplementedException();
-        }
-
-        public bool UserExists(int userId)
-        {
-            if (userId == 0)
-            {
-                throw new ArgumentNullException(nameof(userId));
-            }
-
-            return _context.UserStats.Any(x => x.UserId == userId);
-        }
-
-        public IEnumerable<UserEmails> GetUserEmails()
-        {
-            var query = _context.UserEmails as IQueryable<UserEmails>;
-
-            return query.ToList<UserEmails>();
-        }
-        public UserEmails CreateUserEmail(UserEmails userEmail)
-        {
-            if (userEmail == null)
-            {
-                throw new ArgumentNullException(nameof(userEmail));
-            }
-
-            var newUser = _context.UserEmails.Add(userEmail);
-            return newUser.Entity;
-        }
-
         #region UserGuess
         public async Task<IEnumerable<UsersGuess>> GetUserGuesses()
         {
-            var query = _context.UsersGuess.Include(x=>x.SubImage) as IQueryable<UsersGuess>;
+            var query = _context.UsersGuess.Include(x => x.SubImage) as IQueryable<UsersGuess>;
             return query.ToList<UsersGuess>();
         }
 
@@ -201,11 +114,6 @@ namespace COVERater.API.Services
             }
         }
 
-        public void UpdateUserGuess(UsersGuess usersGuess)
-        {
-          
-        }
-
 
         #endregion
 
@@ -213,7 +121,7 @@ namespace COVERater.API.Services
 
         public IEnumerable<Image> GetImages()
         {
-            var query = _context.Image.Include(x=>x.SubImages) as IQueryable<Image>;
+            var query = _context.Image.Include(x => x.SubImages) as IQueryable<Image>;
 
             return query.ToList<Image>();
         }
@@ -222,24 +130,10 @@ namespace COVERater.API.Services
         {
             var query = _context.Image.Find(imageId);
 
-            if(query == null)
+            if (query == null)
                 throw new ArgumentNullException(nameof(imageId));
 
             return query;
-        }
-
-        public void AddImage(Image image)
-        {
-            if (image == null)
-            {
-                throw new ArgumentNullException(nameof(image));
-            }
-            _context.Image.Add(image);
-        }
-
-        public void UpdateImage(Image image)
-        {
-
         }
 
         #endregion
@@ -254,40 +148,49 @@ namespace COVERater.API.Services
 
         public Token GetToken(int id)
         {
-            var newToken = _context.Tokens.Where(x=>x.TokenId == id);
+            var newToken = _context.Tokens.Where(x => x.TokenId == id);
             return newToken.FirstOrDefault();
             //return token;
         }
 
-        public void UpdateToken(Token token)
-        {
-
-        }
 
         #endregion
 
-        #region email
-        public EmailLogs CreateEmailLogs(EmailLogs email)
+
+        public async Task<VisitCounter> GetUpdateVisitCount()
         {
-            if (email == null)
+            var counter = _context.VisitCount.FirstOrDefault();
+            if (counter != null)
             {
-                throw new ArgumentNullException(nameof(email));
+                counter.Count += 1;
+            }
+            else
+            {
+                counter = new VisitCounter
+                {
+                    Count = 1
+                };
+                _context.VisitCount.Add(counter);
             }
 
-            var newUser = _context.EmailLogs.Add(email);
-            _context.SaveChanges();
-            return newUser.Entity;
+            await Save();
+            return counter;
         }
 
-
-
-        #endregion
 
         public async Task<bool> Save()
         {
-            return (await _context.SaveChangesAsync() >= 0);
+            return (_context.SaveChanges() >= 0);
         }
 
+
+        public async Task<bool> Log(Log log)
+        {
+            var results = _context.Logs.Add(log);
+            _context.SaveChanges();
+            return true;
+
+        }
 
         public void Dispose()
         {

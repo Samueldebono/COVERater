@@ -1,42 +1,11 @@
 <div class="login-wrapper" fxLayout="row" fxLayoutAlign="center center">
-      <div id="Header">
-        <div class="wrapper">
-            <span class="header-home">Coverater</span>
-        </div>
-    </div>
+  <div id="Header">
+    <div class="wrapper"></div>
+  </div>
   <mat-card class="box">
-    <mat-card-header>
-      <mat-card-title>Login</mat-card-title>
-    </mat-card-header>
     <form class="login-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-      <mat-card-content>
-        <br>
-        <mat-form-field class="login-full-width">
-          <input matInput placeholder="Username" formControlName="userName">
-          <span *ngIf="!userName.valid && (userName.touched || userSubmitted)" class="error-block">
-            <span *ngIf="userName.hasError('required')">
-              Please enter an email
-            </span>
-            <span *ngIf="userName.hasError('email')">
-              Please provide valid email
-            </span>
-          </span>
-        </mat-form-field>
-        <br>
-        <mat-form-field class="login-full-width">
-          <input matInput placeholder="Password" required type="password" ngModel formControlName="password">
-          <span *ngIf="!password.valid && (password.touched || userSubmitted)" class="error-block">
-            <span *ngIf="password.hasError('required')">
-              Please enter a password
-            </span>
-          </span>
-        </mat-form-field>
-      </mat-card-content>
-      <mat-card-content *ngIf="reRouted">
-        <p>If you are looking for your passwords please check your email (possibly in your junk)</p>
-      </mat-card-content>
-      <button mat-button mat-raised-button [disabled]="!loginForm.valid"  type="submit" class="btn btn-primary">Login</button>
-      <button  mat-button mat-raised-button type="button" class="btn btn-primary" (click)="resetPassword()" >Forgot Password</button>
+      <span class="header-home">COVERater</span>
+      <button mat-button mat-raised-button type="submit">Enter</button>
     </form>
   </mat-card>
 </div>

@@ -1,6 +1,5 @@
 <div *ngIf="successful === AnswerSuccess.success" id="success-box">
   <form class="quiz-form" [formGroup]="dialogBox" (ngSubmit)="onNoClick()">
-    <!-- <h1 class="alert">So close!</h1> -->
     <div class="face">
       <div class="eye"></div>
       <div class="eye right"></div>
@@ -13,13 +12,12 @@
       <p>Your answer was: {{ percentage }}%</p>
       <p>The cover estimate percentage is: {{ correctPercentage }}%</p>
 
-    <button mat-button type="submit" cdkFocusInitial>Next Image</button>
+      <button mat-button type="submit" cdkFocusInitial>Next Image</button>
     </div>
   </form>
 </div>
 <div *ngIf="successful === AnswerSuccess.close" id="almost-box">
   <form class="quiz-form" [formGroup]="dialogBox" (ngSubmit)="onNoClick()">
-    <!-- <h1 class="alert">So close!</h1> -->
     <div class="face">
       <div class="eye"></div>
       <div class="eye right"></div>
@@ -32,25 +30,25 @@
       <p>Your answer was: {{ percentage }}%</p>
       <p>The cover estimate percentage is: {{ correctPercentage }}%</p>
 
-    <button mat-button type="submit" cdkFocusInitial>Next Image</button>
+      <button mat-button type="submit" cdkFocusInitial>Next Image</button>
     </div>
   </form>
 </div>
 <div *ngIf="successful === AnswerSuccess.far" id="error-box">
   <form class="quiz-form" [formGroup]="dialogBox" (ngSubmit)="onNoClick()">
-      <div class="face2">
-        <div class="eye"></div>
-        <div class="eye right"></div>
-        <div class="mouth sad"></div>
-      </div>
-      <div class="shadow move"></div>
-      <div class="message">
-        <h1 class="alert">Whoops!</h1>
-        <p>That is not the right answer</p>
-        <p>Your answer was: {{ percentage }}%</p>
-        <p>The cover estimate percentage is: {{ correctPercentage }}%</p>
+    <div class="face2">
+      <div class="eye"></div>
+      <div class="eye right"></div>
+      <div class="mouth sad"></div>
+    </div>
+    <div class="shadow move"></div>
+    <div class="message">
+      <h1 class="alert">Whoops!</h1>
+      <p>That is not the right answer</p>
+      <p>Your answer was: {{ percentage }}%</p>
+      <p>The cover estimate percentage is: {{ correctPercentage }}%</p>
 
-     <button mat-button type="submit" cdkFocusInitial>Next Image</button>
-      </div>
+      <button mat-button type="submit" cdkFocusInitial>Next Image</button>
+    </div>
   </form>
 </div>

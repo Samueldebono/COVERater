@@ -9,7 +9,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UserCreate, UserForLogin } from 'src/app/models/user.model';
 import { AlertifyService } from 'src/app/services/alertify/alertify.service';
 import { AuthService } from 'src/app/services/user/authentication.service';
-import { UserService } from 'src/app/services/user/user.service';
 
 @Component({
   selector: 'app-log-in',
@@ -26,18 +25,16 @@ export class LogInComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private userService: UserService,
     private alertify: AlertifyService,
-    private router: Router,
-    private route: ActivatedRoute
+    private router: Router
   ) {}
 
   ngOnInit(): void {
-                localStorage.removeItem('token');
-                localStorage.removeItem('userName');
-                localStorage.removeItem('id');
-                localStorage.removeItem('role');
-                this.createLoginForm();
+    localStorage.removeItem('token');
+    localStorage.removeItem('userName');
+    localStorage.removeItem('id');
+    localStorage.removeItem('role');
+    this.createLoginForm();
   }
 
   createLoginForm() {
@@ -48,36 +45,25 @@ export class LogInComponent implements OnInit {
   }
 
   onSubmit() {
-    // const token = this.authService.authUser(loginForm.value);
     this.userSubmitted = true;
-    if (this.loginForm.valid) {
-      this.authService.authUser(this.loginForm.value).subscribe(
-        (response) => {
-          const user: UserForLogin = response;
+    this.authService.authUser(this.loginForm.value).subscribe(
+      (response) => {
+        const user: UserForLogin = response;
 
-          if (user) {
-            localStorage.setItem('token', user.bearerToken);
-            localStorage.setItem('userName', user.userName);
-            localStorage.setItem('id', user.roleId.toString());
-            localStorage.setItem('role', user.roleType.toString());
-            this.alertify.success('Login Successful');
-            if (user.roleType == 1 || user.userStats.length > 0) {
-              this.router.navigate(['/home/'], { state: { data: { user } } });
-            } else if (user.roleType == 2) {
-              this.router.navigate(['/experience/'], {
-                state: { data: { user } },
-              });
-            } else {
-              this.router.navigate(['/home/'], { state: { data: { user } } });
-            }
-          }
-        },
-        (error) => {
-          // handle error
-          this.alertify.error('Incorrect Login or Password');
+        if (user) {
+          localStorage.setItem('token', user.bearerToken);
+          localStorage.setItem('userName', user.userName);
+          localStorage.setItem('id', user.roleId.toString());
+          localStorage.setItem('role', user.roleType.toString());
+          this.alertify.success('Welcome!');
+          this.router.navigate(['/home/'], { state: { data: { user } } });
         }
-      );
-    }
+      },
+      (error) => {
+        // handle error
+        this.alertify.error('Something went wrong, please contact support');
+      }
+    );
   }
 
   userData(): UserForLogin {
@@ -86,6 +72,7 @@ export class LogInComponent implements OnInit {
       password: this.password.value,
       bearerToken: '',
       status: 0,
+      guesses: [],
     });
   }
 

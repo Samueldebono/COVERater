@@ -1,0 +1,78 @@
+<div class="quiz-wrapper" fxLayout="row" fxLayoutAlign="center center">
+  <form class="quiz-form" (ngSubmit)="onSubmit()">
+    <div>
+      <div class="species-image-parent">
+        <div class="species-image">
+          <h2 class="species-image-tile">
+            What is the percent cover of this species
+          </h2>
+          <mat-spinner *ngIf="loading" alt="loading"></mat-spinner>
+          <button
+            *ngIf="loading"
+            [disabled]="false"
+            mat-button
+            mat-raised-button
+            type="button"
+            (click)="onLoad()"
+          >
+            Reload Image
+          </button>
+          <img
+            [hidden]="loading"
+            (load)="onLoad()"
+            [src]="currentSubUrl"
+            class="shadow-boarder img"
+          />
+        </div>
+        <div>
+          <h2 class="species-image-tile">
+            in this image
+          </h2>
+          <mat-spinner *ngIf="loading2" alt="loading"></mat-spinner>
+          <button
+            *ngIf="loading2"
+            [disabled]="false"
+            mat-button
+            mat-raised-button
+            type="button"
+            (click)="onLoad2()"
+          >
+            Reload Image
+          </button>
+          <img
+            [hidden]="loading2"
+            (load)="onLoad2()"
+            [src]="currentUrl"
+            class="img-large"
+          />
+        </div>
+      </div>
+    </div>
+    <br />
+    <div class="slider-section">
+      <ngx-slider
+        [options]="options"
+        [formControl]="sliderControl"
+        name="options"
+        ngDefaultControl
+      ></ngx-slider>
+      <br />
+      <h2>YOUR CURRENT ESTIMATE: {{ sliderControl.value }}%</h2>
+      <br />
+      <div fxLayout="row" fxLayoutAlign="center center">
+        <button
+          [disabled]="false"
+          mat-button
+          mat-raised-button
+          type="button"
+          (click)="onSubmit()"
+        >
+          Submit
+        </button>
+      </div>
+    </div>
+    <div *ngIf="showProgress" class="accuracy">
+      <p>{{ finalPercentage }}% accuracy from the last 10 images</p>
+    </div>
+  </form>
+</div>

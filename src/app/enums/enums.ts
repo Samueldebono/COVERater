@@ -8,3 +8,8 @@ export enum ExperienceType {
   '21-100',
   'more than 100',
 }
+
+export enum RoleType {
+  Inexperienced = 1,
+  Experienced = 2,
+}

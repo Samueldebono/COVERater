@@ -2,83 +2,87 @@
   <div fxLayout="row" fxLayoutAlign="center center">
     <div id="Header">
       <div class="wrapper">
-        <span class="header-home">Coverater</span>
+        <span class="header-home">COVERater</span>
       </div>
     </div>
   </div>
   <div fxLayout="row" fxLayoutAlign="center center">
     <div class="acknowledgement-body">
-
-      <button mat-button mat-raised-button type="button" (click)="start()">
-        Start
+      <button
+        *ngIf="!completed"
+        mat-button
+        mat-raised-button
+        type="button"
+        (click)="start()"
+      >
+        Let's Begin
       </button>
+
+      <p class="header" *ngIf="completed">
+        Thank you for participating in COVERater, as an experienced user you
+        have completed the trial and no longer need to move onto the next phase.
+      </p>
 
       <div
         id="instructionModal"
         class="container"
         style="padding-left: 80px; outline: none"
       >
-
-            <div class="instruction-card">
-              <img src="../../../assets/images/leaf1.png" class="instuction-img" />
-              <p>
-                Welcome to the COVERater. This free app is designed to train
-                researchers and students to visually estimate the percentage
-                cover of terrestrial and aquatic species accurately. Visually
-                estimating the cover of species is advantageous to those: in the
-                field, under time restrictions and sampling large numbers of
-                quadrats.
-              </p>
-            </div>
-            <div class="instruction-card">
-              <img src="../../../assets/images/leaf2.png" class="instuction-img" />
-              <p>
-                To use this app and be trained successfully, you will estimate
-                the amount of cover of the shown species on randomised images of
-                different environments using the slider tool under the image.
-                Answers range from 0% cover to 100% cover. The intervals of
-                measurement consist of 0.1, 0.2, 0.3, 0.4, 0.5, 0.75, 1, 1.25,
-                1.5, 1.75. From 2% - 100% the intervals increase by 1%. After
-                submitting your estimate, the correct answer will be displayed.
-                Estimates that are within 0-1% of the actual answer are
-                considered accurate (e.g. if the true answer is 5%, estimates of
-                4, 5 & 6% are considered accurate).
-              </p>
-            </div>
-            <div class="instruction-card">
-              <img src="../../../assets/images/leaf3.png" class="instuction-img" />
-              <p>
-                After estimating 10 images, a running average of your estimate
-                accuracy will be displayed. Your training will continue for as
-                long as it takes the running average of your last 10 images to
-                reach 98-100% accuracy. At the completion of training you will
-                see your progress displayed in a graph.
-              </p>
-            </div>
-            <div class="instruction-card">
-              <img src="../../../assets/images/leaf4.png" class="instuction-img" />
-              <p>
-                Estimating Tips:<br /><br>
-                When estimating cover, <br>First, observe the features of the
-                species shown, then match them to the species in the image
-                displayed. <br>Take time to spot all of the different patches of
-                this species to avoid overlooking any parts. <br>Make sure to
-                include all parts of the shown species in your estimation e.g.
-                leaf, stem and flower. <br>Then try to mentally visualise all parts
-                of that species in the corner of the photo, or mentally divide
-                the image into grids of different percentages (e.g. 10 grids of
-                10%, 4 grids of 25% etc.) This will help determine your
-                estimated percentages. <br><br>Make sure to discount any dead
-                terrestrial species from your estimation as well as any parts
-                of the species overlapped by another species. In this training,
-                you are only estimating the shown amount of species, not parts
-                of the species that can’t be seen in the image.
-              </p>
-            </div>
-                        <div class="instruction-card">
-              <img src="../../../assets/images/flowchart.png" class="instuction-img-flowchart" />
-
-            </div>
+        <div class="instruction-card">
+          <img src="../../../assets/images/leaf1.png" class="instuction-img" />
+          <p>
+            Welcome to the COVERater. This free app is designed to train
+            researchers and students to visually estimate the percentage cover
+            of terrestrial and aquatic species accurately. Visually estimating
+            the cover of species is advantageous to those: in the field, under
+            time restrictions and sampling large numbers of quadrats.
+          </p>
+        </div>
+        <div class="instruction-card">
+          <img src="../../../assets/images/leaf2.png" class="instuction-img" />
+          <p>
+            To use this app and be trained successfully, you will estimate the
+            amount of cover of the shown species on randomised images of
+            different environments using the slider tool under the image.
+            Answers range from 0% cover to 100% cover. The intervals of
+            measurement consist of 0.1, 0.2, 0.3, 0.4, 0.5, 0.75, 1, 1.25, 1.5,
+            1.75. From 2% - 100% the intervals increase by 1%. After submitting
+            your estimate, the correct answer will be displayed. Estimates that
+            are within 0-1% of the actual answer are considered accurate (e.g.
+            if the true answer is 5%, estimates of 4, 5 & 6% are considered
+            accurate).
+          </p>
+        </div>
+        <div class="instruction-card">
+          <img src="../../../assets/images/leaf3.png" class="instuction-img" />
+          <p>
+            After estimating 10 images, a running average of your estimate
+            accuracy will be displayed. Your training will continue for as long
+            as it takes the running average of your last 10 images to reach
+            98-100% accuracy. At the completion of training you will see your
+            progress displayed in a graph.
+          </p>
+        </div>
+        <div class="instruction-card">
+          <img src="../../../assets/images/leaf4.png" class="instuction-img" />
+          <p>
+            Estimating Tips:<br /><br />
+            When estimating cover, <br />First, observe the features of the
+            species shown, then match them to the species in the image
+            displayed. <br />Take time to spot all of the different patches of
+            this species to avoid overlooking any parts. <br />Make sure to
+            include all parts of the shown species in your estimation e.g. leaf,
+            stem and flower. <br />Then try to mentally visualise all parts of
+            that species in the corner of the photo, or mentally divide the
+            image into grids of different percentages (e.g. 10 grids of 10%, 4
+            grids of 25% etc.) This will help determine your estimated
+            percentages. <br /><br />Make sure to discount any dead terrestrial
+            species from your estimation as well as any parts of the species
+            overlapped by another species. In this training, you are only
+            estimating the shown amount of species, not parts of the species
+            that can’t be seen in the image.
+          </p>
+        </div>
       </div>
     </div>
   </div>

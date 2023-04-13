@@ -30,7 +30,7 @@ export class GuessService {
     );
   }
 
-  getGuesses(): Observable<UserGuessModel[]> {
+  getGuesses(phase: number): Observable<UserGuessModel[]> {
     let auth_token = localStorage.getItem('token');
     let id = localStorage.getItem('id');
     const httpOptions = new HttpHeaders({
@@ -39,7 +39,20 @@ export class GuessService {
     });
     const requestOptions = { headers: httpOptions };
     return this.http.get<UserGuessModel[]>(
-      this.baseUrl + '/V1/usersGuess/' + id + '/1',
+      this.baseUrl + '/V1/usersGuess/' + id + '/' + phase,
+      requestOptions
+    );
+  }
+
+  getGuessesById(userStatId: string): Observable<UserGuessModel[]> {
+    let auth_token = localStorage.getItem('token');
+    const httpOptions = new HttpHeaders({
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${auth_token}`,
+    });
+    const requestOptions = { headers: httpOptions };
+    return this.http.get<UserGuessModel[]>(
+      this.baseUrl + '/V1/getGuessesById/' + userStatId,
       requestOptions
     );
   }

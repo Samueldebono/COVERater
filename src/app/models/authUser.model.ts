@@ -1,10 +1,19 @@
-import { UserForLogin } from './user.model';
+import { UserForLogin, UserModel } from './user.model';
 
 export interface authUser {
   RoleId: number;
   UserName: string;
   Email: string;
-  RoleType: number;
-  ExperienceLevel: number;
+  roleType: number;
+  experienceLevel: number;
   UserStats: UserForLogin;
+}
+
+export interface authUserWithUserStats {
+  roleId: number;
+  userName: string;
+  email: string;
+  roleType: number;
+  experienceLevel: number;
+  userStats: UserModel[];
 }

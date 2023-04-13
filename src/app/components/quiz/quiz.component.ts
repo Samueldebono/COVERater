@@ -8,17 +8,18 @@ import { PhaseType, UserGuessModel } from 'src/app/models/userGuess.model';
 import { UpdateUser, UserForLogin, UserModel } from 'src/app/models/user.model';
 import { UserService } from 'src/app/services/user/user.service';
 import { MatDialog } from '@angular/material/dialog';
-import { DialogComponent } from '../dialog/dialog.component';
+import { DialogComponent } from '../dialog//training/dialog.component';
 import { AnswerSuccess } from 'src/app/models/enums.model';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Options } from '@angular-slider/ngx-slider';
+import { Helper } from 'src/app/services/helper.service';
 
 @Component({
-  selector: 'app-stageOne',
-  templateUrl: './stageOne.component.html',
-  styleUrls: ['./stageOne.component.less'],
+  selector: 'app-quiz',
+  templateUrl: './quiz.component.html',
+  styleUrls: ['./quiz.component.less'],
 })
-export class StageOneComponent implements OnInit {
+export class QuizComponent implements OnInit {
   imageList: Images[];
   currentUrl: string;
   currentSubUrl: string;
@@ -33,7 +34,6 @@ export class StageOneComponent implements OnInit {
   interval: any;
   userGuesses: UserGuessModel[];
   pictureCount: number;
-  phase: number;
   finishPercentage: number;
   finalPercentage: number;
   showProgress: boolean;
@@ -44,8 +44,10 @@ export class StageOneComponent implements OnInit {
   user: UserForLogin;
   sliderControl: FormControl = new FormControl(0);
   finishImageCount = 49;
+  userGuessLength = 10;
   loading: boolean = true;
   loading2: boolean = true;
+  id: string;
 
   ticks = [
     0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 3, 4, 5, 6, 7, 8,
@@ -98,7 +100,9 @@ export class StageOneComponent implements OnInit {
     private guessService: GuessService,
     private userService: UserService,
     public dialog: MatDialog,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute,
+    private helper: Helper
   ) {}
 
   onInputChange($event: any) {
@@ -107,7 +111,9 @@ export class StageOneComponent implements OnInit {
   }
 
   ngOnInit() {
-    // this.createQuizForm();
+    this.route.paramMap.subscribe((params) => {
+      this.id = params.get('id');
+    });
     this.finishPercentage = 98;
     this.showProgress = false;
     if (
@@ -115,11 +121,19 @@ export class StageOneComponent implements OnInit {
       history.state.data.userModel !== undefined
     ) {
       this.user = history.state.data.userModel;
-      this.phase = this.user.phase;
     } else {
       this.router.navigate(['/home']);
     }
     this.selectImageType(null);
+    if (this.user.guesses !== undefined && this.user.guesses.length > 0) {
+      this.userGuesses = this.user.guesses;
+      if (this.user.guesses.length >= 10) {
+        this.showProgress = true;
+        this.finalPercentage = this.helper.findAverageDifferenceOfList(
+          this.user.guesses
+        );
+      }
+    }
     this.startTimer();
   }
   onLoad() {
@@ -136,7 +150,7 @@ export class StageOneComponent implements OnInit {
       this.loading = true;
       this.loading2 = true;
       this.removeCurrentImageFromList();
-      if (this.user != undefined && this.user.phase == 2) {
+      if (this.user != undefined) {
         this.openDialog();
       } else if (
         this.userGuesses !== undefined &&
@@ -161,50 +175,58 @@ export class StageOneComponent implements OnInit {
     const cImage =
       this.imageList[Math.floor(Math.random() * this.imageList.length)];
     this.currentImage = cImage;
-    const cSubImgae =
-      this.currentImage.subImageDto[
-        Math.floor(Math.random() * this.currentImage.subImageDto.length)
-      ];
-    this.currentSubImage = cSubImgae;
-    this.currentUrl = this.getImageUrl(this.currentImage.fileName);
-    this.currentSubUrl = this.getSubImageUrl(this.currentSubImage.fileName);
+    if (
+      this.currentImage === undefined ||
+      this.currentImage.subImageDto === undefined
+    ) {
+      this.refreshImage();
+    } else {
+      const cSubImgae =
+        this.currentImage.subImageDto[
+          Math.floor(Math.random() * this.currentImage.subImageDto.length)
+        ];
+      this.currentSubImage = cSubImgae;
+      this.currentUrl = this.getImageUrl(this.currentImage.fileName);
+      this.currentSubUrl = this.getSubImageUrl(this.currentSubImage.fileName);
+    }
   }
 
   removeCurrentImageFromList() {
-    this.imageList.forEach((image) => {
-      if (image.imageId === this.currentImage.imageId) {
-        const index = image.subImageDto.indexOf(this.currentSubImage, 0);
-        if (index > -1) {
-          image.subImageDto.splice(index, 1);
+    if (
+      this.userGuesses !== undefined &&
+      (this.userGuesses.length <= 190 || this.userGuesses.length > 191)
+    ) {
+      this.imageList.forEach((image) => {
+        if (image.imageId === this.currentImage.imageId) {
+          const index = image.subImageDto.indexOf(this.currentSubImage, 0);
+          if (index > -1) {
+            image.subImageDto.splice(index, 1);
+          }
+          if (image.subImageDto.length <= 0) {
+            const imageIndex = this.imageList.indexOf(this.currentImage, 0);
+            this.imageList.splice(imageIndex, 1);
+          }
+          return;
         }
-        if (image.subImageDto.length <= 0) {
-          const imageIndex = this.imageList.indexOf(this.currentImage, 0);
-          this.imageList.splice(imageIndex, 1);
-        }
-        return;
-      }
-    });
+      });
+    } else {
+      this.selectImageType(null);
+    }
   }
 
   selectImageType(type?: ImageType) {
     var images: Images[];
-    this.imageService.getAllImages().subscribe((data) => {
-      images = data;
-      switch (type) {
-        case ImageType.land:
-          this.imageList = images.filter((type) => type.type == ImageType.land);
-          break;
-        case ImageType.water:
-          this.imageList = images.filter(
-            (type) => type.type == ImageType.water
-          );
-          break;
-        default:
-          this.imageList = images;
-          break;
+    this.imageService.getAllImages().subscribe(
+      (data) => {
+        this.imageList = data;
+      },
+      (err) => {
+        console.log('Couldnt get images from database');
+      },
+      () => {
+        this.refreshImage();
       }
-      this.refreshImage();
-    });
+    );
   }
 
   userData(): Guess {
@@ -225,7 +247,7 @@ export class StageOneComponent implements OnInit {
       GuessPercentage: guess,
       SubImageId: this.currentSubImage.subImageId,
       RoleId: localStorage.getItem('id'),
-      Phase: this.phase,
+      Phase: 2,
     });
   }
 
@@ -262,80 +284,48 @@ export class StageOneComponent implements OnInit {
     this.sliderControl.reset(0);
   }
 
-  update() {
-    this.guessService.getGuesses().subscribe((guesses) => {
-      this.userGuesses = guesses;
+  update(): any {
+    this.guessService.getGuesses(1).subscribe(
+      (guesses) => {
+        this.userGuesses = guesses;
 
-      //find difference
-      if (
-        this.userGuesses.length >= 9 &&
-        this.phase ==
-          PhaseType[
-            'Training (users estimate images with feedback until they reach 98% running accuracy on last 10 images)'
-          ]
-      ) {
-        var list: UserGuessModel[] = [];
-        this.userGuesses.forEach((val) => list.push(Object.assign({}, val)));
-        list = list
-          .sort((x) => x.usersGuessId)
-          .splice(this.userGuesses.length - 9);
-        this.finalPercentage = this.findAverageDifferenceOfList(list);
-      } else {
-        var list = this.userGuesses.sort((x) => x.usersGuessId);
+        //find difference
+        if (this.userGuesses.length >= this.userGuessLength) {
+          var list: UserGuessModel[] = [];
+          this.userGuesses.forEach((val) => list.push(Object.assign({}, val)));
+          list.sort((x, y) => y.usersGuessId - x.usersGuessId);
+          list.splice(this.userGuessLength);
+        } else {
+          var list = this.userGuesses.sort(
+            (x, y) => y.usersGuessId - x.usersGuessId
+          );
+        }
+
+        this.finalPercentage = this.helper.findAverageDifferenceOfList(list);
+        let dateTime = new Date();
+        this.showProgress = this.userGuesses.length >= this.userGuessLength;
+
+        //save data so if user exits/refreshes can come back to this point
+        var editUserBinding: UpdateUser = {
+          finishingPercent: this.finalPercentage,
+          pictureCycled: this.userGuesses.length,
+          time: dateTime,
+          phase: 2,
+          finishedUtc: new Date(),
+        };
+
+        this.userService.updateUser(editUserBinding).subscribe((results) => {
+          this.userModel = results;
+        });
+      },
+      (err) => {
+        console.log(err);
+        return false;
+      },
+      () => {
+        return true;
       }
-
-      // this.finalPercentage = this.findAverageDifferenceOfList(list);
-
-      let dateTime = new Date();
-      if (
-        this.phase ===
-        PhaseType[
-          'Training (users estimate images with feedback until they reach 98% running accuracy on last 10 images)'
-        ]
-      ) {
-        this.showProgress = this.userGuesses.length >= 9;
-      }
-
-      //save data so if user exits/refreshes can come back to this point
-      var editUserBinding: UpdateUser = {
-        finishingPercent: this.finalPercentage,
-        pictureCycled: this.userGuesses.length,
-        time: dateTime,
-        phase: this.phase,
-        finishedUtc: new Date(),
-      };
-
-      this.userService.updateUser(editUserBinding).subscribe((results) => {
-        this.userModel = results;
-      });
-    });
-  }
-
-  findAverageDifferenceOfList(list: UserGuessModel[]) {
-    var dif = 0.0;
-    if (list.length > 0) {
-      list.forEach((guess) => {
-        dif += this.findSingleDifference(guess);
-      });
-
-      dif = (1 - dif / list.length) * 100;
-    }
-    return Math.round(dif);
-  }
-
-  findHerbivoryDifferenceoOfList(list: UserGuessModel[]) {
-    var guessHerbivoryList: any[];
-    list.forEach((guess) => {
-      guessHerbivoryList.concat(this.findSingleDifference(guess));
-    });
-
-    return guessHerbivoryList;
-  }
-
-  findSingleDifference(guess: UserGuessModel) {
-    var calc = guess.guessPercentage - guess.subImage.coverageRate; //this.currentSubImage.coverageRate;
-    var dif = calc < 0 ? calc * -1 : calc;
-    return dif;
+    );
   }
 
   transform(value: number): string {
@@ -379,8 +369,9 @@ export class StageOneComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (
-        this.finalPercentage > this.finishPercentage &&
-        this.userGuesses.length >= 10
+        (this.finalPercentage >= this.finishPercentage &&
+          this.userGuesses.length >= this.userGuessLength) ||
+        this.userGuesses.length >= 400
       ) {
         this.finish();
       } else {

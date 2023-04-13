@@ -16,11 +16,16 @@ export class UserService {
   baseUrl = environment.baseUrl;
   constructor(private http: HttpClient) {}
 
-  updateUser(updateUser: UpdateUser): Observable<UserModel> {
+  updateUser(updateUser: any, id?: any): Observable<UserModel> {
     const updateUserJson = JSON.stringify(updateUser);
 
     let auth_token = localStorage.getItem('token');
+
     let userId = localStorage.getItem('id');
+
+    if (id !== undefined) {
+      userId = id;
+    }
     const httpOptions = new HttpHeaders({
       'Content-Type': 'application/json',
       Authorization: `Bearer ${auth_token}`,
@@ -58,18 +63,6 @@ export class UserService {
     const requestOptions = { headers: httpOptions };
     return this.http.get<UserModel>(
       this.baseUrl + '/V1/user/' + id,
-      requestOptions
-    );
-  }
-  getUsers(): Observable<UserModel[]> {
-    let auth_token = localStorage.getItem('token');
-    const httpOptions = new HttpHeaders({
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${auth_token}`,
-    });
-    const requestOptions = { headers: httpOptions };
-    return this.http.get<UserModel[]>(
-      this.baseUrl + '/V1/users/results/',
       requestOptions
     );
   }

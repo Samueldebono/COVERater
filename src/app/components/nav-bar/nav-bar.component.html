@@ -1,12 +1,10 @@
 <!-- Toolbar -->
-<mat-toolbar  class="app-header">
-  <div class="logo">Coverater</div>
+<mat-toolbar class="app-header">
+  <div class="logo">COVERater</div>
   <span class="nav-tool-items">
-    <a *ngIf="!loggedin()"  mat-button mat-raised-button routerLink="login" routerLinkActive="active">Login</a>
-    <a *ngIf="loggedin()" mat-button mat-raised-button routerLink="home">Home</a>
-    <a *ngIf="!loggedin()" mat-button mat-raised-button routerLink="register/1" routerLinkActive="active">Register</a>
-    <a *ngIf="adminLoggedin()" mat-button mat-raised-button routerLink="adminResults">ADMIN</a>
-    <a *ngIf="loggedin()" mat-button mat-raised-button (click)="onLogout()">Logout</a>
-    <a *ngIf="!loggedin()" class="secret"  routerLink="register/2" routerLinkActive="active"><img src="../../../assets/images/secret.png"></a>
+    <a *ngIf="loggedin()" mat-button mat-raised-button (click)="onLogout()"
+      >Logout</a
+    >
   </span>
+  <span> Our trainer has been used by ~{{counter}} users</span>
 </mat-toolbar>

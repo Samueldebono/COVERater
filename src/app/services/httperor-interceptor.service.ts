@@ -17,10 +17,9 @@ export class HttpErrorInterceptorService implements HttpInterceptor {
   constructor(private alertify: AlertifyService) {}
   intercept(request: HttpRequest<any>, next: HttpHandler) {
     return next.handle(request).pipe(
-      retryWhen((error) => this.retryRequest(error, 5)),
+      retryWhen((error) => this.retryRequest(error, 50)),
       catchError((error: HttpErrorResponse) => {
         const errorMessage = this.setError(error);
-        // this.alertify.error(errorMessage);
         return throwError(errorMessage);
       })
     );
@@ -55,21 +54,20 @@ export class HttpErrorInterceptorService implements HttpInterceptor {
       // server side error
       if (error.status === 401) {
         return error.error;
+      } else if (error.status === 402) {
+        return error.error;
+      } else if (error.status === 422) {
+        return error.error;
+      } else if (error.status === 500) {
+        return error.error;
       }
-      // else if (error.status === 402) {
-      //   return error.error;
-      // } else if (error.status === 422) {
-      //   return error.error;
-      // } else if (error.status === 500) {
-      //   return error.error;
-      // }
       if (error.error instanceof ErrorEvent) {
         // Client-side errors
         errorMessage = `Error: ${error.error.message}`;
       } else {
         // Server-side errors
-        // errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
-        // errorMessage = `Error Code: ${error.status}\nMessage: Couldn't connect to server`;
+        errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
+        errorMessage = `Error Code: ${error.status}\nMessage: Couldn't connect to server`;
         errorMessage = error.error;
       }
 

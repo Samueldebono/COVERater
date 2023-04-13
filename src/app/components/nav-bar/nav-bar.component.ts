@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { AlertifyService } from '../../services/alertify/alertify.service';
+import { Helper } from 'src/app/services/helper.service';
+import { VisitCounter } from 'src/app/services/visitCounter/visit-counter.service';
 
 @Component({
   selector: 'app-nav-bar',
@@ -11,9 +11,15 @@ export class NavBarComponent implements OnInit {
   loggedinUser?: string;
   adminLoggedinUser?: boolean;
   status?: string;
-  constructor(private alertify: AlertifyService, private router: Router) {}
+  constructor(private helper: Helper, private visitCounter: VisitCounter) {}
 
-  ngOnInit() {}
+  counter: number = 1;
+
+  ngOnInit() {
+    this.visitCounter.getUpdateVisitCounter().subscribe((counter) => {
+      this.counter = counter;
+    });
+  }
 
   loggedin() {
     this.loggedinUser = localStorage.getItem('userName');
@@ -26,17 +32,6 @@ export class NavBarComponent implements OnInit {
   }
 
   onLogout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('userName');
-    localStorage.removeItem('status');
-    localStorage.removeItem('role');
-    this.alertify.success('You are logged out!');
-    this.router.navigate(['/login'], {});
-  }
-
-  adminLoggedin() {
-    this.adminLoggedinUser =
-      localStorage.getItem('userName') && localStorage.getItem('role') === '4';
-    return this.adminLoggedinUser;
+    this.helper.onLogout();
   }
 }

@@ -9,6 +9,7 @@ import { ChartDataSets, ChartOptions, ChartType } from 'chart.js';
 import { Color, Label } from 'ng2-charts';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/user/authentication.service';
+import { Helper } from 'src/app/services/helper.service';
 
 @Component({
   selector: 'app-finished',
@@ -32,7 +33,8 @@ export class FinishedComponent implements OnInit {
     private authService: AuthService,
     private guessService: GuessService,
     private location: Location,
-    private router: Router
+    private router: Router,
+    private helper: Helper
   ) {
     this.userId = this.location.getState();
   }
@@ -76,34 +78,7 @@ export class FinishedComponent implements OnInit {
   }
 
   onSubmit() {
-    if (this.finishBtnText) {
-      this.userService
-        .getUser(localStorage.getItem('id'))
-        .subscribe((userStats) => {
-          const phase =
-            userStats !== undefined && userStats !== null
-              ? userStats.phase + 1
-              : 1;
-          var userCreate: UserCreate = {
-            roleId: localStorage.getItem('id'),
-            phase: phase,
-          };
-          //create new userStats
-          this.userService.createUser(userCreate).subscribe((userModel) => {
-            this.router.navigate(['/stageOne/' + localStorage.getItem('id')], {
-              state: { data: { userModel } },
-            });
-          });
-        });
-    } else {
-      this.router.navigate(['/home/']);
-    }
-  }
-
-  sendDetails() {
-    this.authService
-      .sendDetails(localStorage.getItem('id'))
-      .subscribe((results) => {});
+    this.helper.onLogout();
   }
 
   calculate() {
@@ -111,57 +86,61 @@ export class FinishedComponent implements OnInit {
       .getUser(localStorage.getItem('id'))
       .subscribe((results) => {
         this.user = results;
-        this.firstPhase = this.user.phase < 3;
-        if (!this.firstPhase) {
-          this.finishBtnText = 'Home';
-        }
-        this.guessService.getGuesses().subscribe((guesses) => {
-          this.userGuesses = guesses;
 
-          var imageNumberArray: any[] = [];
-          var guessResultsArray: any[] = [];
-          var time =
-            this.user.timePhase != null || undefined
-              ? this.user.timePhase
-              : new Date();
+        this.authService
+          .getUserExperence(localStorage.getItem('id'))
+          .subscribe((authExp) => {
+            this.finishBtnText = 'Home';
+            this.guessService
+              .getGuesses(this.user.phase)
+              .subscribe((guesses) => {
+                this.userGuesses = guesses;
 
-          //convert time into seconds
-          var seconds = new Date(time).getSeconds();
-          seconds += new Date(time).getMinutes() * 60;
-          seconds += new Date(time).getHours() * 3600;
+                var imageNumberArray: any[] = [];
+                var guessResultsArray: any[] = [];
+                var time =
+                  this.user.timePhase != null || undefined
+                    ? this.user.timePhase
+                    : new Date();
 
-          var time2 =
-            this.user.finishedPhaseUtc != null || undefined
-              ? this.user.finishedPhaseUtc
-              : new Date();
+                //convert time into seconds
+                var seconds = new Date(time).getSeconds();
+                seconds += new Date(time).getMinutes() * 60;
+                seconds += new Date(time).getHours() * 3600;
 
-          var seconds2 = new Date(time2).getSeconds();
-          seconds2 += new Date(time2).getMinutes() * 60;
-          seconds2 += new Date(time2).getHours() * 3600;
+                var time2 =
+                  this.user.finishedPhaseUtc != null || undefined
+                    ? this.user.finishedPhaseUtc
+                    : new Date();
 
-          seconds = seconds2 - seconds;
+                var seconds2 = new Date(time2).getSeconds();
+                seconds2 += new Date(time2).getMinutes() * 60;
+                seconds2 += new Date(time2).getHours() * 3600;
 
-          //Get GuessPercentage - Actual Answer for table
-          let i: number = 1;
-          var guesses = this.userGuesses.sort((x) => x.usersGuessId);
-          guesses.forEach((item) => {
-            var result = Math.round(
-              (item.guessPercentage - item.subImage.coverageRate) * 100
-            );
-            guessResultsArray.push(result);
-            imageNumberArray.push(i);
-            i++;
+                seconds = seconds2 - seconds;
+
+                //Get GuessPercentage - Actual Answer for table
+                let i: number = 1;
+                var guesses = this.userGuesses.sort((x) => x.usersGuessId);
+                guesses.forEach((item) => {
+                  var result = Math.round(
+                    (item.guessPercentage - item.subImage.coverageRate) * 100
+                  );
+                  guessResultsArray.push(result);
+                  imageNumberArray.push(i);
+                  i++;
+                });
+
+                //Total Time
+                this.totalTime = this.convertHMS(seconds);
+                //Average Time
+                var average = seconds / imageNumberArray.length;
+                this.averageTime = this.convertHMS(average);
+
+                this.lineChartData[0].data = guessResultsArray;
+                this.lineChartLabels = imageNumberArray;
+              });
           });
-
-          //Total Time
-          this.totalTime = this.convertHMS(seconds);
-          //Average Time
-          var average = seconds / imageNumberArray.length;
-          this.averageTime = this.convertHMS(average);
-
-          this.lineChartData[0].data = guessResultsArray;
-          this.lineChartLabels = imageNumberArray;
-        });
       });
   }
 
@@ -172,6 +151,7 @@ export class FinishedComponent implements OnInit {
     let h: string;
     let m: string;
     let s: string;
+
     // add 0 if value < 10; Example: 2 => 02
     if (hours < 10) {
       h = '0' + hours;

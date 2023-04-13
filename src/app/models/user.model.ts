@@ -1,5 +1,5 @@
 import { ExperienceType } from '../enums/enums';
-import { PhaseType } from './userGuess.model';
+import { PhaseType, UserGuessModel } from './userGuess.model';
 
 export interface UserForRegister {
   userName: string;
@@ -22,6 +22,7 @@ export interface UserForLogin {
   roleType?: number;
   userStats?: UserModel[];
   phase?: PhaseType;
+  guesses: UserGuessModel[];
 }
 
 export interface UserForLoginForgotPassword {
@@ -52,4 +53,7 @@ export interface UserModel {
   email?: string;
   role?: number;
   experience?: number;
+  guesses: UserGuessModel[];
+  authRoleId: number;
+  deleted?: boolean;
 }

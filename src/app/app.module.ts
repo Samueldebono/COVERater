@@ -15,40 +15,36 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FlexLayoutModule } from '@angular/flex-layout';
 /* Components */
 import { LogInComponent } from './components/log-in/log-in.component';
-import { RegisterComponent } from './components/register/register.component';
-import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { NavBarComponent } from './components/nav-bar/nav-bar.component';
+import { FooterComponent } from './components/footer/footer.component';
 /* Services */
 import { AlertifyService } from './services/alertify/alertify.service';
-import { StageOneComponent } from './components/stageOne/stageOne.component';
+import { Helper } from './services/helper.service';
+import { QuizComponent } from './components/quiz/quiz.component';
 /* Timer */
 import { CountdownModule } from 'ngx-countdown';
 import { FinishedComponent } from './components/finished/finished.component';
-import { DialogComponent } from './components/dialog/dialog.component';
+import { DialogComponent } from './components/dialog/training/dialog.component';
+import { CiteComponent } from './components/dialog/cite/cite.component';
 import { ChartsModule } from 'ng2-charts';
 import { HomeComponent } from './components/home/home.component';
-import { ExperienceComponent } from './components/experience/experience.component';
 
 import { MdbCarouselModule } from 'mdb-angular-ui-kit/carousel';
 import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
-import { AdminResultsComponent } from './components/admin-results/admin-results.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LogInComponent,
-    RegisterComponent,
-    RegisterComponent,
     LogInComponent,
-    ForgotPasswordComponent,
     NavBarComponent,
-    StageOneComponent,
+    QuizComponent,
     FinishedComponent,
     DialogComponent,
+    CiteComponent,
     HomeComponent,
-    ExperienceComponent,
-    AdminResultsComponent,
+    FooterComponent,
   ],
   imports: [
     BrowserModule,
@@ -73,6 +69,7 @@ import { AdminResultsComponent } from './components/admin-results/admin-results.
       multi: true,
     },
     AlertifyService,
+    Helper,
   ],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
